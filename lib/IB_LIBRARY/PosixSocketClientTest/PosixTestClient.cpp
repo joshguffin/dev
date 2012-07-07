@@ -6,8 +6,6 @@
 #include "Contract.h"
 #include "Order.h"
 
-#include <stdio.h>
-
 const int PING_DEADLINE = 2; // seconds
 const int SLEEP_BETWEEN_PINGS = 30; // seconds
 

@@ -1,5 +1,9 @@
-#include <unistd.h>
-#include <stdio.h>
+#ifdef _WIN32
+# include <Windows.h>
+# define sleep( seconds) Sleep( seconds * 1000);
+#else
+# include <unistd.h>
+#endif
 
 #include "PosixTestClient.h"
 
@@ -9,7 +13,7 @@ const unsigned SLEEP_TIME = 10;
 int main(int argc, char** argv)
 {
 	const char* host = argc > 1 ? argv[1] : "";
-	unsigned int port = 4001;
+	unsigned int port = 7496;
 	int clientId = 0;
 
 	unsigned attempt = 0;
