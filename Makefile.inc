@@ -1,22 +1,40 @@
-# set the IBLIB environment variable to point to the libraries directory
-# the default is the current directory
-IBLIB ?= .
+# vim: set ft=make
+#
+# set the $CPPROOT environment variable to point to the directory containing lib/, src/, etc.
+#
+CPPROOT ?= .
+IBLIB = $(CPPROOT)/lib
 
-# use gnu compilers
-CCC = gcc
-CXX = g++
+# use clang compilers
+CCC = clang
+CXX = clang++
 
-INCLUDES = -I. -I$(IBLIB)/ib_files/PosixSocketClient -I$(IBLIB)/ib_files/Shared -I/usr/local/include
-LIBS = -L../ -L/usr/local/lib -L$(IBLIB)/lib -lm
+
+## TODO: adding a library to the list of dependencies should
+## add a line to the INCLUDES and LIBS
+
+INCLUDES = -I. -I$(IBLIB)/includes/ -I/usr/local/include
+LIBS = -L/usr/local/lib -L$(IBLIB)/lib -lm
 
 CCFLAGS = -g -Wall
 LDFLAGS = -g
 
+
+
 .SUFFIXES: .cpp
 
 ################################################################################
+# libib.a
+################################################################################
+ibOBJECTS = $(patsubst %.c,%.o,$(wildcard $(IBLIB)/ib/*.cpp))
+ibLIBRARY = $(IBLIB)/lib/libib.a
 
-.cpp.o:
-	$(CCC) $(INCLUDES) $(CCFLAGS) -c $< -o $@
+$(ibOBJECTS):
+	$(CXX) $(INCLUDES) $(LIBRS) -c $< -o $@
+
+$(ibLIBRARY)_lib:
+	ar rcs $(ibLIBRARY) $(ibOBJECTS)
+
+################################################################################
 
 

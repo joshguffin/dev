@@ -142,7 +142,6 @@ struct ContractDetails
    IBString	tradingHours;
    IBString	liquidHours;
    IBString evRule;
-   double   evMultiplier;
 
    TagValueListSPtr secIdList;
 
@@ -161,6 +160,7 @@ struct ContractDetails
    IBString nextOptionDate;
    IBString nextOptionType;
    bool nextOptionPartial;
+   double   evMultiplier;
    IBString notes;
 };
 
