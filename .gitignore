@@ -1,3 +1,4 @@
 *.o
 library/lib
-
+cscope.*
+tags

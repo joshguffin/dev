@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# don't forget to set!
+# export CSCOPE_DB=$CPPROOT/cscope.out
+
+cd $CPPROOT
+find -L . -regex '.*\(cpp\|hpp\|ch\|h\)' > cscope.files
+
+cscope -b -q > cscope.result 2>&1
+ctags `cat cscope.files`
