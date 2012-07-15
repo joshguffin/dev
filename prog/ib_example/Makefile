@@ -1,16 +1,20 @@
 include $(CPPROOT)/Makefile.inc
 
-USERCPPFLAGS=-DIB_USE_STD_STRING -Wall -Wno-switch
+sampleSOURCES = $(wildcard *.cpp)
+sampleOBJECTS = $(patsubst %.cpp,%.o,$(sampleSOURCES))
 
-sampleOBJECTS = $(patsubst %.c,%.o,$(wildcard *.cpp))
+%.o: %.cpp
+	$(CXX) $(INCLUDES) $(USERCPPFLAGS) $(CCFLAGS) -c $*.cpp -o $@
+	$(CXX) $(INCLUDES) $(USERCPPFLAGS) $(CCFLAGS) -MM -c $*.cpp -o $*.d
 
-$(sampleOBJECTS):
-	$(CXX) $(INCLUDES) $(LIBS) $(CCFLAGS) -c $< -o $@
+# for each .o file, append .d to the list $(..) = foo.o => foo.o foo.d
+-include $(sampleOBJECTS:.o=.d)
 
-sample:
+sample: $(sampleOBJECTS)
 	$(CXX) $(INCLUDES) $(LIBS) $(USERCPPFLAGS) $(LDFLAGS) -o $@ $(sampleOBJECTS)
 
+APPROGS += sample
 
 clean:
-	rm -f $(TARGET) *.o
+	rm -f sample *.o
 

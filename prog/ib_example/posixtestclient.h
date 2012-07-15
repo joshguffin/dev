@@ -1,5 +1,5 @@
-#ifndef posixtestclient_h__INCLUDED
-#define posixtestclient_h__INCLUDED
+#ifndef eposixclientsocket_h_included
+#define eposixclientsocket_h_included
 
 #include "EWrapper.h"
 

@@ -13,7 +13,7 @@ const int SLEEP_BETWEEN_PINGS = 30; // seconds
 
 ///////////////////////////////////////////////////////////
 // member funcs
-PosixTestClient::PosixTestClient() :
+PosixTestClient::PosixTestClient()
    : m_pClient(new EPosixClientSocket(this))
 	, m_state(ST_CONNECT)
 	, m_sleepDeadline(0)
@@ -41,22 +41,8 @@ bool PosixTestClient::connect(const char *host, unsigned int port, int clientId)
 	return bRes;
 }
 
-void
-Stuff()
-{
-   switch(i)
-   {
-      case Junk:
-         ;
-         break;
-      default:
-         break;
-   }
-}
-
 void PosixTestClient::disconnect() const
 {
-   public:
 	m_pClient->eDisconnect();
 
 	printf ( "Disconnected\n");
