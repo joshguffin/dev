@@ -16,7 +16,7 @@ CXX = clang++
 INCLUDES = -I. -I$(IBLIB)/includes/ -I/usr/local/include
 LIBS = -L/usr/local/lib -L$(IBLIB)lib -lm
 
-CCFLAGS = -g -Wall -DIB_USE_STD_STRING -Wno-switch
+CCFLAGS = -g -Wall -Werror -Wextra -DIB_USE_STD_STRING -Wno-switch
 LDFLAGS = -g
 
 .SUFFIXES: .cpp

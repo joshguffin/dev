@@ -4,7 +4,7 @@
 # export CSCOPE_DB=$CPPROOT/cscope.out
 
 cd $CPPROOT
-find -L . -regex '.*\(cpp\|hpp\|ch\|h\)' > cscope.files
+find -L $CPPROOT -regex '.*\(cpp\|hpp\|ch\|h\)' > $CPPROOT/cscope.files
 
-cscope -b -q > cscope.result 2>&1
-ctags `cat cscope.files`
+cscope -b -q > $CPPROOT/cscope.result 2>&1
+ctags `cat $CPPROOT/cscope.files`
