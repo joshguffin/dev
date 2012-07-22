@@ -1,4 +1,5 @@
 *.o
+*.d
 library/lib
 cscope.*
 tags
