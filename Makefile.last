@@ -1,0 +1,39 @@
+
+# do not print all commands
+#.SILENT: $(TESTPROGS) $(APPPROGS)
+
+# all files are compiled using these commands
+%.o: %.cpp
+	$(MAKESOURCE)
+	@$(MAKEDEPEND)
+
+# targets are specified by adding them to TESTPROGS or APPPROGS
+define CREATE_TARGET
+# stof
+$(1): $(foreach object, $($(1)_OBJECTS), $(object))
+	$(CXX) $(LIBS) $(LDFLAGS) -lboost_unit_test_framework \
+		-o $(1) $(foreach object, $($(1)_OBJECTS), $(object))
+endef
+
+# define library targets; lib/libxxxx.a, and xxxx_lib, which produces it
+define CREATE_LIBRARY
+$(eval $(1)_lib_OBJECTS=$(patsubst %.cpp,%.o,$(wildcard $(CPPROOT)/library/$(1)/*.cpp)))
+$(eval $(1)_LIBRARY=$(CPPROOT)/library/lib/lib$(1).a)
+
+$($(1)_LIBRARY): $($(1)_lib_OBJECTS)
+	ar rcs $($(1)_LIBRARY) $($(1)_lib_OBJECTS)
+
+$(1)_lib: $($(1)_lib_OBJECTS) $($(1)_LIBRARY)
+
+endef
+
+$(foreach lib, $(LIBRARIES),  $(eval $(call CREATE_LIBRARY,$(lib))))
+$(foreach app,  $(APPPROGS),  $(eval $(call CREATE_TARGET,$(app))))
+$(foreach test, $(TESTPROGS), $(eval $(call CREATE_TARGET,$(test))))
+
+
+query:
+	echo $(TESTPROGS)
+
+clean:
+	rm -f $(APPPROGS) $(TESTPROGS) *.o *.d

@@ -3,23 +3,36 @@
 # set the $CPPROOT environment variable to point to the directory containing lib/, src/, etc.
 #
 CPPROOT ?= .
-IBLIB = $(CPPROOT)/library/
+IBLIB = $(CPPROOT)/library
 
 # use clang compilers
 CCC = clang
 CXX = clang++
 
+SUFFIXES += .d
+
+# Don't clean up when making these targets
+NODEPS:=clean tags
+
+MAKESOURCE = $(CXX) $(INCLUDES) $(USERCPPFLAGS) $(CCFLAGS) -c $*.cpp -o $@
+MAKEDEPEND = $(CXX) $(INCLUDES) $(USERCPPFLAGS) $(CCFLAGS) -MM -c $*.cpp -o $*.d
+
 
 ## TODO: adding a library to the list of dependencies should
 ## add a line to the INCLUDES and LIBS
 
-INCLUDES = -I. -I$(IBLIB)/ -I$(IBLIB)/includes/ -I/usr/local/include
-LIBS = -L/usr/local/lib -L$(IBLIB)lib -lm
+INCLUDES = -I. -I$(IBLIB) -I$(IBLIB)/includes -I/usr/local/include
+LIBS = -L/usr/local/lib -L$(IBLIB)/lib -lm
 
 CCFLAGS = -g -Wall -Werror -Wextra -DIB_USE_STD_STRING -Wno-switch
 LDFLAGS = -g
 
 .SUFFIXES: .cpp
+
+
+LIBRARIES=string
+
+
 
 ################################################################################
 # libib.a
@@ -34,5 +47,3 @@ $(ibLIBRARY)_lib:
 	ar rcs $(ibLIBRARY) $(ibOBJECTS)
 
 ################################################################################
-
-

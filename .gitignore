@@ -1,5 +1,7 @@
+*.a
 *.o
 *.d
+*_test
 library/lib
 cscope.*
 tags
