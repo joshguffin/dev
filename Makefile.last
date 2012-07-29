@@ -3,16 +3,22 @@
 #.SILENT: $(TESTPROGS) $(APPPROGS)
 
 # all files are compiled using these commands
-%.o: %.cpp
+%.o: %.cpp %.d
 	$(MAKESOURCE)
 	@$(MAKEDEPEND)
 
-# targets are specified by adding them to TESTPROGS or APPPROGS
+
+define LIST_LIBRARIES
+$(foreach lib, $($(1)_LIBRARIES), $(CPPROOT)/library/lib/lib$(lib).a)
+endef
+
+# Given a program name, specified by adding to TESTPROGS or APPPROGS, traverse
+# the list of desired objects and required libraries to produce the make target
 define CREATE_TARGET
 # stof
 $(1): $(foreach object, $($(1)_OBJECTS), $(object))
-	$(CXX) $(LIBS) $(LDFLAGS) -lboost_unit_test_framework \
-		-o $(1) $(foreach object, $($(1)_OBJECTS), $(object))
+	$(CXX) $(LIBS) $(LDFLAGS) $(foreach object, $($(1)_OBJECTS), $(object)) \
+		-lboost_unit_test_framework $(call LIST_LIBRARIES,$(1)) -o $(1) 
 endef
 
 # define library targets; lib/libxxxx.a, and xxxx_lib, which produces it
