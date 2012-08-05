@@ -18,7 +18,7 @@ define CREATE_TARGET
 # stof
 $(1): $(foreach object, $($(1)_OBJECTS), $(object))
 	$(CXX) $(LIBS) $(LDFLAGS) $(foreach object, $($(1)_OBJECTS), $(object)) \
-		-lboost_unit_test_framework $(call LIST_LIBRARIES,$(1)) -o $(1) 
+		-lboost_unit_test_framework $(call LIST_LIBRARIES,$(1)) -o $(1)
 endef
 
 # define library targets; lib/libxxxx.a, and xxxx_lib, which produces it

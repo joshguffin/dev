@@ -14,7 +14,7 @@ SUFFIXES += .d
 NODEPS:=clean tags
 
 MAKESOURCE = $(CXX) $(INCLUDES) $(USERCPPFLAGS) $(CCFLAGS) -c $*.cpp -o $@
-MAKEDEPEND = $(CXX) $(INCLUDES) $(USERCPPFLAGS) $(CCFLAGS) -MM -c $*.cpp -o $*.d
+MAKEDEPEND = $(CXX) $(INCLUDES) $(USERCPPFLAGS) $(CCFLAGS) -c $*.cpp -o $*.d -MM
 
 
 ## TODO: adding a library to the list of dependencies should
