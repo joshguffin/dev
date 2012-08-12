@@ -37,7 +37,7 @@ $(eval $(1)_lib_OBJECTS=$(patsubst %.cpp,%.o,$(wildcard $(CPPROOT)/library/$(1)/
 $(eval $(1)_lib_LIBRARY=$(CPPROOT)/library/lib/lib$(1).a)
 
 $($(1)_lib_LIBRARY): $($(1)_lib_OBJECTS)
-	ar rcs $($(1)_LIBRARY) $($(1)_lib_OBJECTS)
+	ar rcs $($(1)_lib_LIBRARY) $($(1)_lib_OBJECTS)
 
 $(1)_lib: $($(1)_lib_LIBRARY)
 
