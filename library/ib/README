@@ -1,0 +1,10 @@
+Download files from
+
+http://individuals.interactivebrokers.com/en/p.php?f=programInterface&ib_entity=llc
+
+and unzip into the IB_LIBRARY directory.  Subdirectories should appear as:
+
+PosixSocketClient/
+PosixSocketClientTest/
+Shared/
+
