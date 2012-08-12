@@ -7,7 +7,7 @@
 
 #define IMPLEMENT_ACCESSORS(Type , Name) \
    Type Name() const { return Name##_; } \
-   void Name(const Type& t) { Name##_ = t; }
+   void Name(Type t) { Name##_ = t; }
 
 
 //==============================================================================
@@ -17,7 +17,8 @@
 #define IMPLEMENT_SPARSE_ENUM_PRINT_IMPL(Name, Value)    case Name: os << #Name;
 #define IMPLEMENT_SPARSE_ENUM_FROMSTRING_IMPL(Name, Value) if (str == #Name) return Name;
 
-#define IMPLEMENT_SPARSE_ENUM_STRUCT(FieldsMacro, Name)
+/*
+#define IMPLEMENT_SPARSE_ENUM_STRUCT(Name, FieldsMacro)
 struct Name
 {
    enum Type { FieldsMacro(IMPLEMENT_ENUM_DECLARATION_IMPL) Unknown##Name##Value };
@@ -41,7 +42,34 @@ operator<<(std::ostream& os, Name::Type t) {
       FieldsMacro(IMPLEMENT_SPARSE_ENUM_PRINT_IMPL);
       os << #Name << "::UnknownEnumValue(" << static_cast<int>(t) << ')';
    }
+   return os;
 }
+*/
+
+//==============================================================================
+// Boost unit test definitions
+//==============================================================================
+
+/*
+#ifdef BOOST_TEST_MAIN
+
+#define FieldsMacroExample(F) \
+   F(EnumVal1, 'a') \
+   F(EnumVal2, 'c') \
+   F(EnumVal3, 'D') \
+   F(EnumVal4, 'G') \
+   F(EnumVal5, ' ')
+
+
+BOOST_AUTO_TEST_CASE(EnumStructExample)
+{
+   IMPLEMENT_SPARSE_ENUM_STRUCT(SomeStruct, FieldsMacroExample);
+}
+
+#undef FieldsMacroExample
+
+#endif // BOOST_TEST_MAIN
+*/
 
 #endif // headermacros_h_INCLUDED
 
