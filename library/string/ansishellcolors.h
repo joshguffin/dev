@@ -1,49 +1,57 @@
-#ifndef ansishellcolors_h_INCLUDED
-#define ansishellcolors_h_INCLUDED
+#ifndef string_ansishellcolors_h_INCLUDED
+#define string_ansishellcolors_h_INCLUDED
 
-#include "includes/headermacros.h"
+#include "include/headermacros.h"
+#include <string>
 
 namespace StringLib {
-
-const std::string EscapeStartPre("\033[");
-const std::string EscapeStartPost("m");
-const std::string EscapeDisableColors("\033[0m");
-
-struct Name
-{
-   enum { FieldsMacro
-};
-
 
 class ColorWrapper
 {
 
 public:
 
-   IMPLEMENT_ACCESSOR(const std::string& , string);
+   enum Decorator {
+      Black   = 30,
+      Red     = 31,
+      Green   = 32,
+      Yellow  = 33,
+      Blue    = 34,
+      Magenta = 35,
+      Cyan    = 36,
+      White   = 37,
+   };
 
+public:
+
+   ColorWrapper();
+
+   IMPLEMENT_ACCESSOR(const std::string& , string);
+   void clearDecorations() { decorators_ = ""; };
 
 private:
 
+   static const std::string EscapeStartPre;
+   static const std::string EscapeStartPost;
+   static const std::string EscapeDisableColors;
+
+   std::string decorators_;
    std::string string_;
+
+   bool escaped_;
+
+   friend ColorWrapper& operator<<(ColorWrapper&, const std::string&);
+   friend ColorWrapper& operator<<(ColorWrapper&, ColorWrapper::Decorator&);
+   friend std::ostream& operator<<(std::ostream&, const ColorWrapper&);
 };
 
-inline std::ostream&
-operator<<(std::ostream& os, const ColorWrapper& str)
+inline ColorWrapper&
+operator<<(ColorWrapper& cw, const std::string& str)
 {
-
+   cw.string_ += str;
+   return cw;
 }
-
-\033[01;38;5;160m
-Black   30 40
-Red     31 41
-Green   32 42
-Yellow  33 43
-Blue    34 44
-Magenta 35 45
-Cyan    36 46
-White   37 47
 
 } // end of namespace StringLib
 
-#endif // ansishellcolors_h_INCLUDED
+#endif // string_ansishellcolors_h_INCLUDED
