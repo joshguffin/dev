@@ -16,11 +16,10 @@ NODEPS:=clean tags
 MAKESOURCE = $(CXX) $(INCLUDES) $(USERCPPFLAGS) $(CCFLAGS) -c $*.cpp -o $@
 MAKEDEPEND = $(CXX) $(INCLUDES) $(USERCPPFLAGS) $(CCFLAGS) -c $*.cpp -o $*.d -MM
 
-
 ## TODO: adding a library to the list of dependencies should
 ## add a line to the INCLUDES and LIBS
 
-INCLUDES = -I. -I$(IBLIB) -I$(IBLIB)/includes -I/usr/local/include
+INCLUDES = -I. -I$(IBLIB) -I$(IBLIB)/include -I/usr/local/include
 LIBS = -L/usr/local/lib -lm
 
 CCFLAGS = -g -Wall -Werror -Wextra -DIB_USE_STD_STRING -Wno-switch
@@ -29,6 +28,8 @@ LDFLAGS = -g
 .SUFFIXES: .cpp
 
 
+# Make this a list of all compilable libraries
+# TODO: automate additions
 LIBRARIES=string
 
 
@@ -36,13 +37,13 @@ LIBRARIES=string
 ################################################################################
 # libib.a
 ################################################################################
-ibOBJECTS = $(patsubst %.c,%.o,$(wildcard $(IBLIB)/ib/*.cpp))
-ibLIBRARY = $(IBLIB)/lib/libib.a
-
-$(ibOBJECTS):
-	$(CXX) $(INCLUDES) $(CCFLAGS) $(LIBRS) -c $< -o $@
-
-$(ibLIBRARY)_lib:
-	ar rcs $(ibLIBRARY) $(ibOBJECTS)
-
+#ibOBJECTS = $(patsubst %.c,%.o,$(wildcard $(IBLIB)/ib/*.cpp))
+#ibLIBRARY = $(IBLIB)/lib/libib.a
+#
+#$(ibOBJECTS):
+#	$(CXX) $(INCLUDES) $(CCFLAGS) $(LIBRS) -c $< -o $@
+#
+#$(ibLIBRARY)_lib:
+#	ar rcs $(ibLIBRARY) $(ibOBJECTS)
+#
 ################################################################################

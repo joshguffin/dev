@@ -3,17 +3,25 @@
 #.SILENT: $(TESTPROGS) $(APPPROGS)
 
 # all files are compiled using these commands
-%.o: %.cpp %.d
-	$(MAKESOURCE)
+
+%.o : %.cpp
 	@$(MAKEDEPEND)
+	$(MAKESOURCE)
 
 
+###################################################################################
+# Each application defines a variable called "application_LIBRARIES" consisting
+# of a space-separated list of libraries on which the application depends.  This
+# function expands this list.
+###################################################################################
 define LIST_LIBRARIES
 $(foreach lib, $($(1)_LIBRARIES), $(CPPROOT)/library/lib/lib$(lib).a)
 endef
 
+###################################################################################
 # Given a program name, specified by adding to TESTPROGS or APPPROGS, traverse
 # the list of desired objects and required libraries to produce the make target
+###################################################################################
 define CREATE_TARGET
 # stof
 $(1): $(foreach object, $($(1)_OBJECTS), $(object))
@@ -21,15 +29,17 @@ $(1): $(foreach object, $($(1)_OBJECTS), $(object))
 		-lboost_unit_test_framework $(call LIST_LIBRARIES,$(1)) -o $(1)
 endef
 
+###################################################################################
 # define library targets; lib/libxxxx.a, and xxxx_lib, which produces it
+###################################################################################
 define CREATE_LIBRARY
 $(eval $(1)_lib_OBJECTS=$(patsubst %.cpp,%.o,$(wildcard $(CPPROOT)/library/$(1)/*.cpp)))
-$(eval $(1)_LIBRARY=$(CPPROOT)/library/lib/lib$(1).a)
+$(eval $(1)_lib_LIBRARY=$(CPPROOT)/library/lib/lib$(1).a)
 
-$($(1)_LIBRARY): $($(1)_lib_OBJECTS)
+$($(1)_lib_LIBRARY): $($(1)_lib_OBJECTS)
 	ar rcs $($(1)_LIBRARY) $($(1)_lib_OBJECTS)
 
-$(1)_lib: $($(1)_lib_OBJECTS) $($(1)_LIBRARY)
+$(1)_lib: $($(1)_lib_LIBRARY)
 
 endef
 
@@ -37,9 +47,8 @@ $(foreach lib, $(LIBRARIES),  $(eval $(call CREATE_LIBRARY,$(lib))))
 $(foreach app,  $(APPPROGS),  $(eval $(call CREATE_TARGET,$(app))))
 $(foreach test, $(TESTPROGS), $(eval $(call CREATE_TARGET,$(test))))
 
-
 query:
-	echo $(TESTPROGS)
+	@echo $(TESTPROGS)
 
 clean:
 	rm -f $(APPPROGS) $(TESTPROGS) *.o *.d

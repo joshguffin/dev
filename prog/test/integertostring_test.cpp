@@ -56,14 +56,14 @@ RunStringTest(T val, const std::string& description)
    BOOST_CHECK(equal);
 }
 
-#define CREATE_AUTO_TEST_CASE(T)                                                         \
-   BOOST_AUTO_TEST_CASE(IntegerToString_##T##_Test)                                      \
-   {                                                                                     \
-      StringLib::IntegerToStringTest::RunStringTest(std::numeric_limits<T>::max() , #T); \
-      StringLib::IntegerToStringTest::RunStringTest(std::numeric_limits<T>::min() , #T); \
-      StringLib::IntegerToStringTest::RunStringTest(static_cast<T>(0)             , #T); \
-      StringLib::IntegerToStringTest::RunStringTest(static_cast<T>(1)             , #T); \
-      StringLib::IntegerToStringTest::RunStringTest(static_cast<T>(-1)            , #T); \
+#define CREATE_AUTO_TEST_CASE(T)                         \
+   BOOST_AUTO_TEST_CASE(IntegerToString_##T##_Test)      \
+   {                                                     \
+      RunStringTest(std::numeric_limits<T>::max() , #T); \
+      RunStringTest(std::numeric_limits<T>::min() , #T); \
+      RunStringTest(static_cast<T>(0)             , #T); \
+      RunStringTest(static_cast<T>(1)             , #T); \
+      RunStringTest(static_cast<T>(-1)            , #T); \
    }
 
 CREATE_AUTO_TEST_CASE(int8_t  );
@@ -77,7 +77,7 @@ CREATE_AUTO_TEST_CASE(uint64_t);
 
 #undef CREATE_AUTO_TEST_CASE
 
-#define RUN_EXPLICIT_TEST(Val) StringLib::IntegerToStringTest::RunStringTest(Val, #Val);
+#define RUN_EXPLICIT_TEST(Val) RunStringTest(Val, #Val);
 
    enum Unnamed    { One, Two };
    enum Characters { charOne = 'a', charTwo = '\0', charThree = ' ' };
