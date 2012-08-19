@@ -26,7 +26,17 @@ define CREATE_TARGET
 # stof
 $(1): $(foreach object, $($(1)_OBJECTS), $(object))
 	$(CXX) $(LIBS) $(LDFLAGS) $(foreach object, $($(1)_OBJECTS), $(object)) \
-		-lboost_unit_test_framework $(call LIST_LIBRARIES,$(1)) -o $(1)
+		$(call LIST_LIBRARIES,$(1)) -o $(1)
+endef
+
+###################################################################################
+# Given a program name, specified by adding to TESTPROGS or APPPROGS, traverse
+# the list of desired objects and required libraries to produce the make target
+###################################################################################
+define CREATE_TEST_TARGET
+# stof
+	$(eval LIBS=$(LIBS) -lboost_unit_test_framework)
+	$(eval $(call CREATE_TARGET,$(1)))
 endef
 
 ###################################################################################
@@ -37,6 +47,7 @@ $(eval $(1)_lib_OBJECTS=$(patsubst %.cpp,%.o,$(wildcard $(CPPROOT)/library/$(1)/
 $(eval $(1)_lib_LIBRARY=$(CPPROOT)/library/lib/lib$(1).a)
 
 $($(1)_lib_LIBRARY): $($(1)_lib_OBJECTS)
+	@mkdir -p $(CPPROOT)/library/lib/
 	ar rcs $($(1)_lib_LIBRARY) $($(1)_lib_OBJECTS)
 
 $(1)_lib: $($(1)_lib_LIBRARY)
@@ -45,7 +56,7 @@ endef
 
 $(foreach lib, $(LIBRARIES),  $(eval $(call CREATE_LIBRARY,$(lib))))
 $(foreach app,  $(APPPROGS),  $(eval $(call CREATE_TARGET,$(app))))
-$(foreach test, $(TESTPROGS), $(eval $(call CREATE_TARGET,$(test))))
+$(foreach test, $(TESTPROGS), $(eval $(call CREATE_TEST_TARGET,$(test))))
 
 query:
 	@echo $(TESTPROGS)

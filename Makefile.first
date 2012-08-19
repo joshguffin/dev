@@ -1,9 +1,18 @@
 # vim: set ft=make
 #
-# set the $CPPROOT environment variable to point to the directory containing lib/, src/, etc.
+# set the $CPPROOT environment variable to point to the directory containing library/, prog/, Makefile.first, etc.
 #
 CPPROOT ?= .
 IBLIB = $(CPPROOT)/library
+	
+ifndef CPPROOT
+    $(error CPPROOT is undefined; make it point to the directory containing library/ and prog/)
+endif
+
+check_cpproot:
+	ifndef CPPROOT
+	    $(error CPPROOT is undefined; make it point to the directory containing library/ and prog/)
+	endif
 
 CCC = clang
 CXX = clang++
@@ -30,7 +39,7 @@ LDFLAGS = -g
 
 # Make this a list of all compilable libraries
 # TODO: automate additions
-LIBRARIES=string
+LIBRARIES=string ib
 
 
 

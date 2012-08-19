@@ -1,20 +1,8 @@
-include $(CPPROOT)/Makefile.inc
+include $(CPPROOT)/Makefile.first
 
-sampleSOURCES = $(wildcard *.cpp)
-sampleOBJECTS = $(patsubst %.cpp,%.o,$(sampleSOURCES))
+sample_OBJECTS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
+sample_LIBRARIES = ib
+APPPROGS += sample
 
-%.o: %.cpp
-	$(CXX) $(INCLUDES) $(USERCPPFLAGS) $(CCFLAGS) -c $*.cpp -o $@
-	$(CXX) $(INCLUDES) $(USERCPPFLAGS) $(CCFLAGS) -MM -c $*.cpp -o $*.d
-
-# for each .o file, append .d to the list $(..) = foo.o => foo.o foo.d
--include $(sampleOBJECTS:.o=.d)
-
-sample: $(sampleOBJECTS)
-	$(CXX) $(INCLUDES) $(LIBS) $(USERCPPFLAGS) $(LDFLAGS) -o $@ $(sampleOBJECTS)
-
-APPROGS += sample
-
-clean:
-	rm -f sample *.o
+include $(CPPROOT)/Makefile.last
 
