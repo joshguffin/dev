@@ -5,10 +5,6 @@
 CPPROOT ?= .
 IBLIB = $(CPPROOT)/library
 	
-ifndef CPPROOT
-    $(error CPPROOT is undefined; make it point to the directory containing library/ and prog/)
-endif
-
 check_cpproot:
 	ifndef CPPROOT
 	    $(error CPPROOT is undefined; make it point to the directory containing library/ and prog/)
@@ -31,7 +27,7 @@ MAKEDEPEND = $(CXX) $(INCLUDES) $(USERCPPFLAGS) $(CCFLAGS) -c $*.cpp -o $*.d -MM
 INCLUDES = -I. -I$(IBLIB) -I$(IBLIB)/include -I/usr/local/include
 LIBS = -L/usr/local/lib -lm
 
-CCFLAGS = -g -Wall -Werror -Wextra -DIB_USE_STD_STRING -Wno-switch
+CCFLAGS = -g -Wall -Werror -Wextra -DIB_USE_STD_STRING -Wno-switch -Wno-unused-parameter
 LDFLAGS = -g
 
 .SUFFIXES: .cpp

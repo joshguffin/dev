@@ -3,10 +3,9 @@
 #include "eposixclientsocket.h"
 #include "eposixclientsocketplatform.h"
 
-#include "Contract.h"
-#include "Order.h"
-
-#include <stdio.h>
+#include "ib/IBString.h"
+#include "ib/Contract.h"
+#include "ib/Order.h"
 
 const int PING_DEADLINE = 2; // seconds
 const int SLEEP_BETWEEN_PINGS = 30; // seconds
@@ -14,7 +13,7 @@ const int SLEEP_BETWEEN_PINGS = 30; // seconds
 ///////////////////////////////////////////////////////////
 // member funcs
 PosixTestClient::PosixTestClient()
-   : m_pClient(new EPosixClientSocket(this))
+	: m_pClient(new EPosixClientSocket(this))
 	, m_state(ST_CONNECT)
 	, m_sleepDeadline(0)
 	, m_orderId(0)
@@ -192,9 +191,9 @@ void PosixTestClient::cancelOrder()
 
 ///////////////////////////////////////////////////////////////////
 // events
-void PosixTestClient::orderStatus( OrderId orderId, const IBString &status, int filled,
+void PosixTestClient::orderStatus( OrderId orderId, const std::string &status, int filled,
 	   int remaining, double avgFillPrice, int permId, int parentId,
-	   double lastFillPrice, int clientId, const IBString& whyHeld)
+	   double lastFillPrice, int clientId, const std::string& whyHeld)
 
 {
 	if( orderId == m_orderId) {
@@ -229,7 +228,7 @@ void PosixTestClient::currentTime( long time)
 	}
 }
 
-void PosixTestClient::error(const int id, const int errorCode, const IBString errorString)
+void PosixTestClient::error(const int id, const int errorCode, const std::string errorString)
 {
 //	printf( "Error id=%d, errorCode=%d, msg=%s\n", id, errorCode, errorString.c_str());
 
@@ -243,20 +242,20 @@ void PosixTestClient::tickOptionComputation( TickerId tickerId, TickType tickTyp
 											 double optPrice, double pvDividend,
 											 double gamma, double vega, double theta, double undPrice) {}
 void PosixTestClient::tickGeneric(TickerId tickerId, TickType tickType, double value) {}
-void PosixTestClient::tickString(TickerId tickerId, TickType tickType, const IBString& value) {}
-void PosixTestClient::tickEFP(TickerId tickerId, TickType tickType, double basisPoints, const IBString& formattedBasisPoints,
-							   double totalDividends, int holdDays, const IBString& futureExpiry, double dividendImpact, double dividendsToExpiry) {}
+void PosixTestClient::tickString(TickerId tickerId, TickType tickType, const std::string& value) {}
+void PosixTestClient::tickEFP(TickerId tickerId, TickType tickType, double basisPoints, const std::string& formattedBasisPoints,
+							   double totalDividends, int holdDays, const std::string& futureExpiry, double dividendImpact, double dividendsToExpiry) {}
 void PosixTestClient::openOrder( OrderId orderId, const Contract&, const Order&, const OrderState& ostate) {}
 void PosixTestClient::openOrderEnd() {}
-void PosixTestClient::winError( const IBString &str, int lastError) {}
+void PosixTestClient::winError( const std::string &str, int lastError) {}
 void PosixTestClient::connectionClosed() {}
-void PosixTestClient::updateAccountValue(const IBString& key, const IBString& val,
-										  const IBString& currency, const IBString& accountName) {}
+void PosixTestClient::updateAccountValue(const std::string& key, const std::string& val,
+										  const std::string& currency, const std::string& accountName) {}
 void PosixTestClient::updatePortfolio(const Contract& contract, int position,
 		double marketPrice, double marketValue, double averageCost,
-		double unrealizedPNL, double realizedPNL, const IBString& accountName){}
-void PosixTestClient::updateAccountTime(const IBString& timeStamp) {}
-void PosixTestClient::accountDownloadEnd(const IBString& accountName) {}
+		double unrealizedPNL, double realizedPNL, const std::string& accountName){}
+void PosixTestClient::updateAccountTime(const std::string& timeStamp) {}
+void PosixTestClient::accountDownloadEnd(const std::string& accountName) {}
 void PosixTestClient::contractDetails( int reqId, const ContractDetails& contractDetails) {}
 void PosixTestClient::bondContractDetails( int reqId, const ContractDetails& contractDetails) {}
 void PosixTestClient::contractDetailsEnd( int reqId) {}
@@ -265,23 +264,22 @@ void PosixTestClient::execDetailsEnd( int reqId) {}
 
 void PosixTestClient::updateMktDepth(TickerId id, int position, int operation, int side,
 									  double price, int size) {}
-void PosixTestClient::updateMktDepthL2(TickerId id, int position, IBString marketMaker, int operation,
+void PosixTestClient::updateMktDepthL2(TickerId id, int position, std::string marketMaker, int operation,
 										int side, double price, int size) {}
-void PosixTestClient::updateNewsBulletin(int msgId, int msgType, const IBString& newsMessage, const IBString& originExch) {}
-void PosixTestClient::managedAccounts( const IBString& accountsList) {}
-void PosixTestClient::receiveFA(faDataType pFaDataType, const IBString& cxml) {}
-void PosixTestClient::historicalData(TickerId reqId, const IBString& date, double open, double high,
+void PosixTestClient::updateNewsBulletin(int msgId, int msgType, const std::string& newsMessage, const std::string& originExch) {}
+void PosixTestClient::managedAccounts( const std::string& accountsList) {}
+void PosixTestClient::receiveFA(faDataType pFaDataType, const std::string& cxml) {}
+void PosixTestClient::historicalData(TickerId reqId, const std::string& date, double open, double high,
 									  double low, double close, int volume, int barCount, double WAP, int hasGaps) {}
-void PosixTestClient::scannerParameters(const IBString &xml) {}
+void PosixTestClient::scannerParameters(const std::string &xml) {}
 void PosixTestClient::scannerData(int reqId, int rank, const ContractDetails &contractDetails,
-	   const IBString &distance, const IBString &benchmark, const IBString &projection,
-	   const IBString &legsStr) {}
+	   const std::string &distance, const std::string &benchmark, const std::string &projection,
+	   const std::string &legsStr) {}
 void PosixTestClient::scannerDataEnd(int reqId) {}
 void PosixTestClient::realtimeBar(TickerId reqId, long time, double open, double high, double low, double close,
 								   long volume, double wap, int count) {}
-void PosixTestClient::fundamentalData(TickerId reqId, const IBString& data) {}
+void PosixTestClient::fundamentalData(TickerId reqId, const std::string& data) {}
 void PosixTestClient::deltaNeutralValidation(int reqId, const UnderComp& underComp) {}
 void PosixTestClient::tickSnapshotEnd(int reqId) {}
 void PosixTestClient::marketDataType(TickerId reqId, int marketDataType) {}
-void PosixTestClient::commissionReport( const CommissionReport& commissionReport) {}
 
