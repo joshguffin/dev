@@ -1,19 +1,27 @@
-#ifdef _WIN32
-# include <Windows.h>
-# define sleep( seconds) Sleep( seconds * 1000);
-#else
-# include <stdio.h>
-#endif
-
 #include "posixtestclient.h"
+#include <boost/program_options.hpp>
+#include <stdio.h>
 
 const unsigned MAX_ATTEMPTS = 50;
 const unsigned SLEEP_TIME = 10;
 
+using namespace boost::program_options;
+
 int main(int argc, char** argv)
 {
+   options_description desc("Allowed command-line options");
+   desc.add_options()
+      ("help", "Display this help information")
+      ("host", boost::program_options::value<std::string>(), "host to connect to");
+
+   variables_map m;
+   store(parse_command_line(argc, argv, desc), m);
+   notify(m);
+
+
+
 	const char* host = argc > 1 ? argv[1] : "";
-	unsigned int port = 7496;
+	unsigned int port = 4001;
 	int clientId = 0;
 
 	unsigned attempt = 0;

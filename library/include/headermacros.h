@@ -9,6 +9,8 @@
    Type Name() const { return Name##_; } \
    void Name(Type t) { Name##_ = t; }
 
+#define IMPLEMENT_STATIC_ACCESSOR(Type , Name, Var) \
+   static Type Name() const { return Instance().Var##_; }
 
 //==============================================================================
 

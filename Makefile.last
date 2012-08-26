@@ -26,7 +26,7 @@ define CREATE_TARGET
 # stof
 $(1): $(foreach object, $($(1)_OBJECTS), $(object))
 	$(CXX) $(LIBS) $(LDFLAGS) $(foreach object, $($(1)_OBJECTS), $(object)) \
-		$(call LIST_LIBRARIES,$(1)) -o $(1)
+		$($(1)_LDFLAGS) $(call LIST_LIBRARIES,$(1)) -o $(1)
 endef
 
 ###################################################################################
