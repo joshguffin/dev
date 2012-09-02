@@ -3,7 +3,7 @@
 # set the $CPPROOT environment variable to point to the directory containing library/, prog/, Makefile.first, etc.
 #
 CPPROOT ?= .
-IBLIB = $(CPPROOT)/library
+LIBRARY = $(CPPROOT)/library
 	
 check_cpproot:
 	ifndef CPPROOT
@@ -18,14 +18,16 @@ SUFFIXES += .d
 # Don't clean up when making these targets
 NODEPS:=clean tags
 
+MAKEPRINT  = $(CXX) $*.cpp -o $@
 MAKESOURCE = $(CXX) $(INCLUDES) $(USERCPPFLAGS) $(CCFLAGS) -c $*.cpp -o $@
+#MAKEPRINT  = $(MAKESOURCE)
 MAKEDEPEND = $(CXX) $(INCLUDES) $(USERCPPFLAGS) $(CCFLAGS) -c $*.cpp -o $*.d -MM
 
 ## TODO: adding a library to the list of dependencies should
 ## add a line to the INCLUDES and LIBS
 
-INCLUDES = -I. -I$(IBLIB) -I$(IBLIB)/include -I/usr/local/include
-LIBS = -L/usr/local/lib -lm
+INCLUDES = -I. -I$(LIBRARY) -I$(LIBRARY)/include -I$(LIBRARY)/glog/include -I/usr/local/include
+LIBS = -L/usr/local/lib -L$(LIBRARY)/lib -L$(LIBRARY)/glog/lib -lm
 
 CCFLAGS = -g -Wall -Werror -Wextra -DIB_USE_STD_STRING -Wno-switch -Wno-unused-parameter
 LDFLAGS = -g
@@ -37,13 +39,11 @@ LDFLAGS = -g
 # TODO: automate additions
 LIBRARIES=string ib
 
-
-
 ################################################################################
 # libib.a
 ################################################################################
-#ibOBJECTS = $(patsubst %.c,%.o,$(wildcard $(IBLIB)/ib/*.cpp))
-#ibLIBRARY = $(IBLIB)/lib/libib.a
+#ibOBJECTS = $(patsubst %.c,%.o,$(wildcard $(LIBRARY)/ib/*.cpp))
+#ibLIBRARY = $(LIBRARY)/lib/libib.a
 #
 #$(ibOBJECTS):
 #	$(CXX) $(INCLUDES) $(CCFLAGS) $(LIBRS) -c $< -o $@

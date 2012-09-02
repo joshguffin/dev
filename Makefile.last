@@ -5,9 +5,9 @@
 # all files are compiled using these commands
 
 %.o : %.cpp
+	$(MAKEPRINT)
 	@$(MAKEDEPEND)
-	$(MAKESOURCE)
-
+	@$(MAKESOURCE)
 
 ###################################################################################
 # Each application defines a variable called "application_LIBRARIES" consisting
@@ -23,8 +23,7 @@ endef
 # the list of desired objects and required libraries to produce the make target
 ###################################################################################
 define CREATE_TARGET
-# stof
-$(1): $(foreach object, $($(1)_OBJECTS), $(object))
+$(1): $(foreach object, $($(1)_OBJECTS), $(object)) $(call LIST_LIBRARIES,$(1))
 	$(CXX) $(LIBS) $(LDFLAGS) $(foreach object, $($(1)_OBJECTS), $(object)) \
 		$($(1)_LDFLAGS) $(call LIST_LIBRARIES,$(1)) -o $(1)
 endef
@@ -34,7 +33,6 @@ endef
 # the list of desired objects and required libraries to produce the make target
 ###################################################################################
 define CREATE_TEST_TARGET
-# stof
 	$(eval LIBS=$(LIBS) -lboost_unit_test_framework)
 	$(eval $(call CREATE_TARGET,$(1)))
 endef
@@ -43,7 +41,10 @@ endef
 # define library targets; lib/libxxxx.a, and xxxx_lib, which produces it
 ###################################################################################
 define CREATE_LIBRARY
-$(eval $(1)_lib_OBJECTS=$(patsubst %.cpp,%.o,$(wildcard $(CPPROOT)/library/$(1)/*.cpp)))
+# all .cpp files are contributors
+$(eval $(1)_lib_SOURCES=$(wildcard $(CPPROOT)/library/$(1)/*.cpp))
+# except for those of the form xxx_test.cpp
+$(eval $(1)_lib_OBJECTS=$(patsubst %.cpp,%.o,$(filter-out *_test.cpp,$($(1)_lib_SOURCES))))
 $(eval $(1)_lib_LIBRARY=$(CPPROOT)/library/lib/lib$(1).a)
 
 $($(1)_lib_LIBRARY): $($(1)_lib_OBJECTS)
