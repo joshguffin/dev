@@ -24,9 +24,17 @@
 // creates enum Name
 #define IMPLEMENT_SPARSE_ENUM_WRAPPER(Name, FieldsMacro)                       \
    IMPLEMENT_ENUM_WRAPPER_IMPL(SPARSE, Name, FieldsMacro)                      \
+   IMPLEMENT_ENUM_PRINT(Name::Type, Name::ToString)
 
 #define IMPLEMENT_COMPACT_ENUM_WRAPPER(Name, FieldsMacro)                      \
    IMPLEMENT_ENUM_WRAPPER_IMPL(COMPACT, Name, FieldsMacro)                     \
+   IMPLEMENT_ENUM_PRINT(Name::Type, Name::ToString)
+
+#define IMPLEMENT_SPARSE_ENUM_WRAPPER_IN_CLASS(Name, FieldsMacro)              \
+   IMPLEMENT_ENUM_WRAPPER_IMPL(SPARSE, Name, FieldsMacro)
+
+#define IMPLEMENT_COMPACT_ENUM_WRAPPER_IN_CLASS(Name, FieldsMacro)             \
+   IMPLEMENT_ENUM_WRAPPER_IMPL(COMPACT, Name, FieldsMacro)
 
 //=== Enum implementation macros ===============================================
 
@@ -70,7 +78,6 @@ operator<<(std::ostream& os, Type t) {                                         \
    }
 
 #define IMPLEMENT_ENUM_WRAPPER_IMPL(EnumType, Name, FieldsMacro)               \
-   struct Name { IMPLEMENT_ENUM_IMPL(EnumType, Type, FieldsMacro) };           \
-   IMPLEMENT_ENUM_PRINT(Name::Type, Name::ToString)
+   struct Name { IMPLEMENT_ENUM_IMPL(EnumType, Type, FieldsMacro) };
 
 #endif // headermacros_h_INCLUDED

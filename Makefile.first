@@ -27,14 +27,14 @@ PRINT_DEPEND  = "	[DEP] $*.cpp"
 ## add a line to the INCLUDES and LIBS
 
 INCLUDES = -I. -I$(LIBRARY) -I$(LIBRARY)/include -I$(LIBRARY)/glog/include -I/usr/local/include
-LIBS = -L/usr/local/lib -L$(LIBRARY)/lib -L$(LIBRARY)/glog/lib -lm
+LIBS = -L/usr/lib -L/usr/local/lib -L$(LIBRARY)/glog/lib -L$(LIBRARY)/lib -L$(LIBRARY)/glog/lib -lm
 
 CCFLAGS = -g -Wall -Werror -Wextra -DIB_USE_STD_STRING -Wno-switch -Wno-unused-parameter
-LDFLAGS = -g
+LDFLAGS = -g -lboost_iostreams
 
 .SUFFIXES: .cpp
 
 
 # Make this a list of all compilable libraries
 # TODO: automate additions
-LIBRARIES=util string ib
+LIBRARIES=util string ib system
