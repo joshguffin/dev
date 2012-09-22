@@ -1,6 +1,7 @@
 *.a
 *.o
 *.d
+*.P
 *_test
 library/lib
 cscope.*

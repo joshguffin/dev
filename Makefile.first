@@ -4,11 +4,6 @@
 #
 CPPROOT ?= .
 LIBRARY = $(CPPROOT)/library
-	
-check_cpproot:
-	ifndef CPPROOT
-	    $(error CPPROOT is undefined; make it point to the directory containing library/ and prog/)
-	endif
 
 CCC = clang
 CXX = clang++
@@ -18,10 +13,15 @@ SUFFIXES += .d
 # Don't clean up when making these targets
 NODEPS:=clean tags
 
-MAKEPRINT  = $(CXX) $*.cpp -o $@
-MAKESOURCE = $(CXX) $(INCLUDES) $(USERCPPFLAGS) $(CCFLAGS) -c $*.cpp -o $@
+MAKEPRINT  = "	[CXX] $*.cpp"
 #MAKEPRINT  = $(MAKESOURCE)
-MAKEDEPEND = $(CXX) $(INCLUDES) $(USERCPPFLAGS) $(CCFLAGS) -c $*.cpp -o $*.d -MM
+MAKESTEM   = $(CXX) $(INCLUDES) $(USERCPPFLAGS) $(CCFLAGS) -c $*.cpp -o
+MAKESOURCE = $(MAKESTEM) $@
+MAKEDEPEND = $(MAKESTEM) $*.d -MM
+LINKSTEM   = $(CXX) $(LIBS) $(LDFLAGS)
+
+CREATE_DEPEND = $(SHELL) -ec '$(MAKEDEPEND) && cat $*.d | sed "s/$*.o/& $@/g" > $@'
+PRINT_DEPEND  = "	[DEP] $*.cpp"
 
 ## TODO: adding a library to the list of dependencies should
 ## add a line to the INCLUDES and LIBS
@@ -37,18 +37,4 @@ LDFLAGS = -g
 
 # Make this a list of all compilable libraries
 # TODO: automate additions
-LIBRARIES=string ib
-
-################################################################################
-# libib.a
-################################################################################
-#ibOBJECTS = $(patsubst %.c,%.o,$(wildcard $(LIBRARY)/ib/*.cpp))
-#ibLIBRARY = $(LIBRARY)/lib/libib.a
-#
-#$(ibOBJECTS):
-#	$(CXX) $(INCLUDES) $(CCFLAGS) $(LIBRS) -c $< -o $@
-#
-#$(ibLIBRARY)_lib:
-#	ar rcs $(ibLIBRARY) $(ibOBJECTS)
-#
-################################################################################
+LIBRARIES=util string ib
