@@ -47,10 +47,15 @@ $(eval $(1)_lib_SOURCES=$(wildcard $(CPPROOT)/library/$(1)/*.cpp))
 $(eval $(1)_lib_OBJECTS=$(patsubst %.cpp,%.o,$(filter-out *_test.cpp,$($(1)_lib_SOURCES))))
 $(eval $(1)_lib_LIBRARY=$(CPPROOT)/library/lib/lib$(1).a)
 
+define \n
+
+endef
+
 $($(1)_lib_LIBRARY): $($(1)_lib_OBJECTS)
 	@mkdir -p $(CPPROOT)/library/lib/
-	ar rcs $($(1)_lib_LIBRARY) $($(1)_lib_OBJECTS)
-
+	@echo ar rcs $($(1)_lib_LIBRARY) \\
+	@/usr/bin/printf "`echo $($(1)_lib_OBJECTS) | sed 's/ / \\\\ \n/g'`\n"
+	@ar rcs $($(1)_lib_LIBRARY) $($(1)_lib_OBJECTS)
 $(1)_lib: $($(1)_lib_LIBRARY)
 
 endef
