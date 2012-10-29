@@ -1,9 +1,12 @@
 #ifndef include_common_h_INCLUDED
 #define include_common_h_INCLUDED
 
-// event logs
-#include <glog/include/glog/logging.h>
-#include <include/headermacros.h>
+#include "include/headermacros.h"
+
+#include "system/log.h"
+#include "system/system.h"
+#include "system/process.h"
+
 
 
 #endif // include_common_h_INCLUDED

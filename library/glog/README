@@ -1,6 +1,0 @@
-1) download glog:
-  svn checkout http://google-glog.googlecode.com/svn/trunk/ google-glog-read-only
-2) compile and install
-  cd google-glog-read-only && configure --prefix=$CPPROOT/library/glog && make && make install
-3) link:
-  cd $CPPROOT/library/lib && ln -s ../glog/lib/libglog.a

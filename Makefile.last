@@ -5,7 +5,7 @@
 # all files are compiled using these commands
 
 %.o : %.cpp
-	$(MAKEPRINT)
+	@echo $(MAKEPRINT)
 	@$(MAKEDEPEND)
 	@$(MAKESOURCE)
 
