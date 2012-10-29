@@ -1,6 +1,7 @@
 #ifndef system_log_ch_INCLUDED
 #define system_log_ch_INCLUDED
 
+#include "system/timer.h"
 #include <stdlib.h>
 
 namespace SystemLib {
@@ -12,16 +13,13 @@ operator<<(Log& log, const T& value)
    if (log.current_ >= log.filter_)
       return log;
 
-   if (log.beginningOfLine_)
-      log.beginLine();
-
    bool fileOpen = log.file_.is_open();
 
    if (fileOpen)
-      log.file_ << value;
+      log.write(log.file_, value);
 
    if (log.requiresConsoleDisplay(fileOpen))
-      cout << value;
+      log.write(cout, value);
 
    return log;
 }
@@ -51,6 +49,23 @@ operator<<(Log& log, const Log::EndMessage&)
    log.beginningOfLine_ = true;
    return log;
 }
+
+template <typename T>
+void
+Log::write(std::ostream& os, const T& item)
+{
+   if (beginningOfLine_) {
+      if (millisecondResolution_)
+         os << MillisecondPrecisionTime() << ' ';
+      else
+         os << SecondPrecisionTime() << ' ';
+
+      beginningOfLine_ = false;
+   }
+
+   os << item;
+}
+
 
 } // end of namespace SystemLib
 

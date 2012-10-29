@@ -10,6 +10,8 @@
 
 BOOST_AUTO_TEST_CASE(SparseValuesTest)
 {
+   LOG.millisecondResolution(true);
+
    LOG << "Stuff" << endm;
    LOG(WARN) << "Stuff" << endm;
    LOG(FATAL) << "outch" << endm;

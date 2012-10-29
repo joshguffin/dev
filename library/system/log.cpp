@@ -22,12 +22,14 @@ bool
 Log::requiresConsoleDisplay(bool fileOpen) const
 {
    return (!fileOpen ||
-           current_ != Level::Warning &&
-           current_ != Level::Info);
+           (current_ != Level::Warning &&
+            current_ != Level::Info));
 }
 
 Log::Log()
    : fileFlushing_(true)
+   , beginningOfLine_(true)
+   , millisecondResolution_(false)
    , filter_(Level::Unknown)
    , current_(Level::Normal)
 {}
