@@ -5,7 +5,7 @@
 # all files are compiled using these commands
 
 %.o : %.cpp
-	$(MAKEPRINT)
+	@echo $(MAKEPRINT)
 	@$(MAKEDEPEND)
 	@$(MAKESOURCE)
 
@@ -23,7 +23,8 @@ endef
 # the list of desired objects and required libraries to produce the make target
 ###################################################################################
 define CREATE_TARGET
-$(1): $(foreach object, $($(1)_OBJECTS), $(object)) $(call LIST_LIBRARIES,$(1))
+$(eval LIBRARIES="$(LIBRARIES) $($(1)_LIBRARIES)")
+$(1): $($(1)_OBJECTS)
 	$(CXX) $(LIBS) $(LDFLAGS) $(foreach object, $($(1)_OBJECTS), $(object)) \
 		$($(1)_LDFLAGS) $(call LIST_LIBRARIES,$(1)) -o $(1)
 endef
@@ -46,21 +47,29 @@ $(eval $(1)_lib_SOURCES=$(wildcard $(CPPROOT)/library/$(1)/*.cpp))
 # except for those of the form xxx_test.cpp
 $(eval $(1)_lib_OBJECTS=$(patsubst %.cpp,%.o,$(filter-out *_test.cpp,$($(1)_lib_SOURCES))))
 $(eval $(1)_lib_LIBRARY=$(CPPROOT)/library/lib/lib$(1).a)
-
+# create the actual library target
 $($(1)_lib_LIBRARY): $($(1)_lib_OBJECTS)
 	@mkdir -p $(CPPROOT)/library/lib/
-	ar rcs $($(1)_lib_LIBRARY) $($(1)_lib_OBJECTS)
-
+	@/bin/echo -e "ar rcs `echo $($(1)_lib_LIBRARY) $($(1)_lib_OBJECTS) | sed 's/ / \\\\\n/g'`"
+	@ar rcs $($(1)_lib_LIBRARY) $($(1)_lib_OBJECTS)
+# create the redirect target
 $(1)_lib: $($(1)_lib_LIBRARY)
 
 endef
 
-$(foreach lib, $(LIBRARIES),  $(eval $(call CREATE_LIBRARY,$(lib))))
+# The following create targets and add entries to LIBRARIES
 $(foreach app,  $(APPPROGS),  $(eval $(call CREATE_TARGET,$(app))))
 $(foreach test, $(TESTPROGS), $(eval $(call CREATE_TEST_TARGET,$(test))))
 
-query:
-	@echo $(TESTPROGS)
+# The following create targets for the entries in LIBRARIES
+$(eval LIBRARIES=$(shell echo $(LIBRARIES) | tr ' ' '\n' | sort | uniq))
+$(foreach lib,  $(LIBRARIES), $(eval $(call CREATE_LIBRARY,$(lib))))
+
+targets:
+	@echo "Known targets:"
+	@echo "tests = $(TESTPROGS)"
+	@echo "apps  = $(APPPROGS)"
+	@echo "libs  = $(LIBRARIES)"
 
 clean:
 	rm -f $(APPPROGS) $(TESTPROGS) *.o *.d

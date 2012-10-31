@@ -20,21 +20,12 @@ MAKESOURCE = $(MAKESTEM) $@
 MAKEDEPEND = $(MAKESTEM) $*.d -MM
 LINKSTEM   = $(CXX) $(LIBS) $(LDFLAGS)
 
-CREATE_DEPEND = $(SHELL) -ec '$(MAKEDEPEND) && cat $*.d | sed "s/$*.o/& $@/g" > $@'
-PRINT_DEPEND  = "	[DEP] $*.cpp"
-
-## TODO: adding a library to the list of dependencies should
-## add a line to the INCLUDES and LIBS
-
-INCLUDES = -I. -I$(LIBRARY) -I$(LIBRARY)/include -I$(LIBRARY)/glog/include -I/usr/local/include
-LIBS = -L/usr/lib -L/usr/local/lib -L$(LIBRARY)/glog/lib -L$(LIBRARY)/lib -L$(LIBRARY)/glog/lib -lm
+INCLUDES = -I. -I$(LIBRARY) -I$(LIBRARY)/include -I/usr/local/include
+LIBS = -L/usr/lib -L/usr/local/lib -L$(LIBRARY)/lib -lm
 
 CCFLAGS = -g -Wall -Werror -Wextra -DIB_USE_STD_STRING -Wno-switch -Wno-unused-parameter
-LDFLAGS = -g -lboost_iostreams
+LDFLAGS = -g
+
+LIBRARIES=""
 
 .SUFFIXES: .cpp
-
-
-# Make this a list of all compilable libraries
-# TODO: automate additions
-LIBRARIES=util string ib system

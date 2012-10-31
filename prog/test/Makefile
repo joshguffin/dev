@@ -12,9 +12,4 @@ TESTPROGS += stringtable_test
 integertostring_test_OBJECTS	=	integertostring_test.o
 TESTPROGS += integertostring_test
 
-glog_test_OBJECTS	=	glog_test.o
-glog_test_LIBRARIES = glog
-TESTPROGS += glog_test
-
-
 include $(CPPROOT)/Makefile.last
