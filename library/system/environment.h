@@ -2,6 +2,7 @@
 #define util_environment_h_INCLUDED
 
 #include <stdlib.h>
+#include <string>
 
 class Environment
 {
