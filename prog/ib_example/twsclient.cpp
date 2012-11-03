@@ -5,8 +5,8 @@
 #include "ib/Order.h"
 
 // local headers
-#include "eposixclientsocket.h"
-#include "posixtestclient.h"
+#include "twssocket.h"
+#include "twsclient.h"
 
 #include <iostream>
 using std::cout;
@@ -14,15 +14,12 @@ using std::endl;
 
 #define PRINT(x) ' ' << #x << '=' << x
 
-const int PING_DEADLINE = 2; // seconds
 const int SLEEP_BETWEEN_PINGS = 30; // seconds
 
 ///////////////////////////////////////////////////////////
 // member funcs
 TwsClient::TwsClient()
 	: client_(new TwsSocket(*this))
-	, state_(ST_CONNECT)
-	, sleepDeadline_(0)
 	, oid_(0)
 {
 }
@@ -32,31 +29,19 @@ TwsClient::~TwsClient()
 }
 
 bool
-TwsClient::connect(const char *host, unsigned int port, int clientId)
+TwsClient::connect(const std::string& host, unsigned int port)
 {
-   if (isConnected())
+   if (client_->isConnected())
       return true;
 
-   // trying to connect
-   printf("Connecting to %s:%d clientId:%d\n", !(host && *host) ? "127.0.0.1" : host, port, clientId);
+   bool bRes = client_->connect(host, port);
 
-   bool bRes = client_->eConnect(host, port, clientId);
-
-   if (bRes) {
-      printf("Connected to %s:%d clientId:%d\n", !(host && *host) ? "127.0.0.1" : host, port, clientId);
-   }
+   if (bRes)
+      cout << "TwsClient::connect: connected to " << host << ':' << port << endl;
    else
-      printf("Cannot connect to %s:%d clientId:%d\n", !(host && *host) ? "127.0.0.1" : host, port, clientId);
+      cout << "TwsClient::connect: failed to connect to " << host << ':' << port << endl;
 
    return bRes;
-}
-
-void
-TwsClient::disconnect() const
-{
-   client_->eDisconnect();
-
-   printf ("Disconnected\n");
 }
 
 bool
@@ -68,106 +53,7 @@ TwsClient::isConnected() const
 void
 TwsClient::processMessages()
 {
-   fd_set readSet, writeSet, errorSet;
-
-   struct timeval tval;
-   tval.tv_usec = 0;
-   tval.tv_sec = 0;
-
-   time_t now = time(NULL);
-
-   switch (state_) {
-      case ST_PLACEORDER:
-         placeOrder();
-         break;
-      case ST_PLACEORDER_ACK:
-         break;
-      case ST_CANCELORDER:
-         cancelOrder();
-         break;
-      case ST_CANCELORDER_ACK:
-         break;
-      case ST_PING:
-         reqCurrentTime();
-         break;
-      case ST_PING_ACK:
-         if (sleepDeadline_ < now) {
-            disconnect();
-            return;
-         }
-         break;
-      case ST_IDLE:
-         if (sleepDeadline_ < now) {
-            state_ = ST_PING;
-            return;
-         }
-         break;
-   }
-
-   if (sleepDeadline_ > 0) {
-      // initialize timeout with sleepDeadline_ - now
-      tval.tv_sec = sleepDeadline_ - now;
-   }
-
-   if (client_->fd() < 0 )
-      return;
-
-   FD_ZERO(&readSet);
-   errorSet = writeSet = readSet;
-
-   FD_SET(client_->fd(), &readSet);
-
-   if (!client_->isOutBufferEmpty())
-      FD_SET(client_->fd(), &writeSet);
-
-   FD_CLR(client_->fd(), &errorSet);
-
-   int ret = select(client_->fd() + 1, &readSet, &writeSet, &errorSet, &tval);
-
-   // timeout
-   if (ret == 0)
-      return;
-
-   if (ret < 0) {	// error
-      disconnect();
-      return;
-   }
-
-   if (client_->fd() < 0)
-      return;
-
-   int socketError = FD_ISSET(client_->fd(), &errorSet);
-   if (socketError)
-      client_->onError();
-
-   if (client_->fd() < 0)
-      return;
-
-   int writeReady = FD_ISSET(client_->fd(), &writeSet);
-   if (writeReady)
-      client_->onSend();
-
-   if (client_->fd() < 0)
-      return;
-
-   int readReady = FD_ISSET(client_->fd(), &readSet);
-   if (readReady)
-      client_->onReceive();
-}
-
-//////////////////////////////////////////////////////////////////
-// methods
-void
-TwsClient::reqCurrentTime()
-{
-   printf("Requesting Current Time\n");
-
-   // set ping deadline to "now + n seconds"
-   sleepDeadline_ = time(NULL) + PING_DEADLINE;
-
-   state_ = ST_PING_ACK;
-
-   client_->reqCurrentTime();
+   client_->processMessages();
 }
 
 void
@@ -188,8 +74,6 @@ TwsClient::placeOrder()
 
    printf("Placing Order %ld: %s %ld %s at %f\n", oid_, order.action.c_str(), order.totalQuantity, contract.symbol.c_str(), order.lmtPrice);
 
-   state_ = ST_PLACEORDER_ACK;
-
    //client_->placeOrder(oid_, contract, order);
    client_->reqMktData(1, contract, "221,165,236,258", false);
 }
@@ -198,8 +82,6 @@ void
 TwsClient::cancelOrder()
 {
    printf("Cancelling Order %ld\n", oid_);
-
-   state_ = ST_CANCELORDER_ACK;
 
    client_->cancelOrder(oid_);
 }
@@ -219,38 +101,34 @@ TwsClient::orderStatus(OrderId orderId,
                        const std::string& whyHeld)
 
 {
-   if (orderId == oid_) {
-      if (state_ == ST_PLACEORDER_ACK && (status == "PreSubmitted" || status == "Submitted"))
-         state_ = ST_CANCELORDER;
 
-      if (state_ == ST_CANCELORDER_ACK && status == "Cancelled")
-         state_ = ST_PING;
-
-      printf("Order: id=%ld, status=%s\n", orderId, status.c_str());
-   }
+   cout
+      << "TwsClient::orderStatus: "
+      << PRINT(orderId)
+      << PRINT(status)
+      << PRINT(filled)
+      << PRINT(remaining)
+      << PRINT(avgFillPrice)
+      << PRINT(permId)
+      << PRINT(parentId)
+      << PRINT(lastFillPrice)
+      << PRINT(clientId)
+      << PRINT(whyHeld)
+      << endl;
 }
 
 void
 TwsClient::nextValidId(OrderId orderId)
 {
    oid_ = orderId;
-
-   state_ = ST_PLACEORDER;
 }
 
 void
 TwsClient::currentTime(long time)
 {
-   if (state_ == ST_PING_ACK) {
-      time_t t = (time_t)time;
-      struct tm * timeinfo = localtime (&t);
-      printf("The current date/time is: %s", asctime(timeinfo));
-
-      time_t now = ::time(NULL);
-      sleepDeadline_ = now + SLEEP_BETWEEN_PINGS;
-
-      state_ = ST_IDLE;
-   }
+   time_t t = (time_t)time;
+   struct tm * timeinfo = localtime (&t);
+   printf("The current date/time is: %s", asctime(timeinfo));
 }
 
 void
@@ -264,7 +142,7 @@ TwsClient::error(const int id, const int errorCode, const std::string errorStrin
       << endl;
 
    if (id == -1 && errorCode == 1100) // if "Connectivity between IB and TWS has been lost"
-      disconnect();
+      client_->disconnect();
 }
 
 void

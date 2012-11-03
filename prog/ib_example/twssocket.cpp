@@ -1,23 +1,39 @@
-#include "eposixclientsocket.h"
+
+#include "twssocket.h"
 
 #include "ib/TwsSocketClientErrors.h"
 #include "ib/EWrapper.h"
 
 #include <arpa/inet.h>
 #include <errno.h>
-#include <sys/select.h>
 #include <string.h>
+#include <iostream>
+
+using std::cout;
+using std::endl;
+
+const int PING_DEADLINE = 2; // seconds
+
 
 ///////////////////////////////////////////////////////////
 // member funcs
-TwsSocket::TwsSocket(EWrapper& ptr)
-   : EClientSocketBase(&ptr)
+TwsSocket::TwsSocket(EWrapper& wrap)
+   : EClientSocketBase(&wrap)
+   , wrapper_(wrap)
+	, sleepDeadline_(time(NULL) + PING_DEADLINE)
+	, fd_(-1)
 {
-	fd_ = -1;
 }
 
 TwsSocket::~TwsSocket()
 {
+}
+
+bool
+TwsSocket::connect(const std::string& host, unsigned port)
+{
+   const int clientID = 0;
+   return TwsSocket::eConnect(host.c_str(), port, clientID);
 }
 
 bool
@@ -29,7 +45,7 @@ TwsSocket::eConnect(const char* host, unsigned int port, int clientId)
 	// already connected?
 	if (fd_ >= 0) {
 		errno = EISCONN;
-		getWrapper()->error(NO_VALID_ID, ALREADY_CONNECTED.code(), ALREADY_CONNECTED.msg());
+		wrapper_.error(NO_VALID_ID, ALREADY_CONNECTED.code(), ALREADY_CONNECTED.msg());
 		return false;
 	}
 
@@ -38,7 +54,7 @@ TwsSocket::eConnect(const char* host, unsigned int port, int clientId)
 
 	// cannot create socket
 	if (fd_ < 0) {
-		getWrapper()->error(NO_VALID_ID, FAIL_CREATE_SOCK.code(), FAIL_CREATE_SOCK.msg());
+		wrapper_.error(NO_VALID_ID, FAIL_CREATE_SOCK.code(), FAIL_CREATE_SOCK.msg());
 		return false;
 	}
 
@@ -54,10 +70,10 @@ TwsSocket::eConnect(const char* host, unsigned int port, int clientId)
 	sa.sin_addr.s_addr = inet_addr(host);
 
 	// try to connect
-	int result = connect(fd_, (struct sockaddr *) &sa, sizeof(sa));
+	int result = ::connect(fd_, (struct sockaddr *) &sa, sizeof(sa));
 	if (result < 0) {
 		// error connecting
-		getWrapper()->error(NO_VALID_ID, CONNECT_FAIL.code(), CONNECT_FAIL.msg());
+		wrapper_.error(NO_VALID_ID, CONNECT_FAIL.code(), CONNECT_FAIL.msg());
 		return false;
 	}
 
@@ -68,13 +84,19 @@ TwsSocket::eConnect(const char* host, unsigned int port, int clientId)
 
 	while (isSocketOK() && !isConnected()) {
 		if (!checkMessages()) {
-			getWrapper()->error(NO_VALID_ID, CONNECT_FAIL.code(), CONNECT_FAIL.msg());
+			wrapper_.error(NO_VALID_ID, CONNECT_FAIL.code(), CONNECT_FAIL.msg());
 			return false;
 		}
 	}
 
 	// successfully connected
 	return true;
+}
+
+void
+TwsSocket::disconnect()
+{
+   TwsSocket::eDisconnect();
 }
 
 void
@@ -91,12 +113,6 @@ bool
 TwsSocket::isSocketOK() const
 {
 	return (fd_ >= 0);
-}
-
-int
-TwsSocket::fd() const
-{
-	return fd_;
 }
 
 int
@@ -131,6 +147,69 @@ TwsSocket::receive(char* buf, size_t sz)
 		return 0;
 	}
 	return nResult;
+}
+
+void
+TwsSocket::processMessages()
+{
+   fd_set readSet, writeSet, errorSet;
+
+   struct timeval tval;
+   tval.tv_usec = 0;
+   tval.tv_sec = 0;
+
+   time_t now = time(NULL);
+
+   while (sleepDeadline_ <= now)
+      sleepDeadline_ += PING_DEADLINE;
+
+   tval.tv_sec = sleepDeadline_ - now;
+
+   if (fd_ < 0 )
+      return;
+
+   FD_ZERO(&readSet);
+   errorSet = writeSet = readSet;
+
+   FD_SET(fd_, &readSet);
+
+   if (!isOutBufferEmpty())
+      FD_SET(fd_, &writeSet);
+
+   FD_CLR(fd_, &errorSet);
+
+   int ret = select(fd_ + 1, &readSet, &writeSet, &errorSet, &tval);
+
+   // timeout
+   if (ret == 0)
+      return;
+
+   if (ret < 0) {
+      cout << "TwsSocket::processMessages: select error " << errno << endl;
+      eDisconnect();
+      return;
+   }
+
+   if (fd_ < 0)
+      return;
+
+   int socketError = FD_ISSET(fd_, &errorSet);
+   if (socketError)
+      onError();
+
+   if (fd_ < 0)
+      return;
+
+   int writeReady = FD_ISSET(fd_, &writeSet);
+   if (writeReady)
+      onSend();
+
+   if (fd_ < 0)
+      return;
+
+   int readReady = FD_ISSET(fd_, &readSet);
+   if (readReady)
+      onReceive();
 }
 
 ///////////////////////////////////////////////////////////
@@ -178,9 +257,9 @@ TwsSocket::handleSocketError()
 		return false;
 
 	if (errno == ECONNREFUSED)
-		getWrapper()->error(NO_VALID_ID, CONNECT_FAIL.code(), CONNECT_FAIL.msg());
+		wrapper_.error(NO_VALID_ID, CONNECT_FAIL.code(), CONNECT_FAIL.msg());
    else
-      getWrapper()->error(NO_VALID_ID, SOCKET_EXCEPTION.code(),
+      wrapper_.error(NO_VALID_ID, SOCKET_EXCEPTION.code(),
 			SOCKET_EXCEPTION.msg() + strerror(errno));
 	// reset errno
 	errno = 0;

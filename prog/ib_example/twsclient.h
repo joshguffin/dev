@@ -1,5 +1,5 @@
-#ifndef posixtestclient_h__INCLUDED
-#define posixtestclient_h__INCLUDED
+#ifndef twsclient_h_INCLUDED
+#define twsclient_h_INCLUDED
 
 #include "ib/EWrapper.h"
 
@@ -8,17 +8,6 @@
 #include <stdio.h>
 
 class TwsSocket;
-
-enum State {
-	ST_CONNECT,
-	ST_PLACEORDER,
-	ST_PLACEORDER_ACK,
-	ST_CANCELORDER,
-	ST_CANCELORDER_ACK,
-	ST_PING,
-	ST_PING_ACK,
-	ST_IDLE
-};
 
 
 class TwsClient : public EWrapper
@@ -32,13 +21,11 @@ public:
 
 public:
 
-	bool connect(const char * host, unsigned int port, int clientId = 0);
-	void disconnect() const;
+   bool connect(const std::string& host, unsigned port);
 	bool isConnected() const;
 
 private:
 
-	void reqCurrentTime();
 	void placeOrder();
 	void cancelOrder();
 
@@ -86,11 +73,7 @@ private:
 private:
 
 	boost::scoped_ptr<TwsSocket> client_;
-	State state_;
-	time_t sleepDeadline_;
-
 	OrderId oid_;
 };
 
-#endif
-
+#endif // twsclient_h_INCLUDED
