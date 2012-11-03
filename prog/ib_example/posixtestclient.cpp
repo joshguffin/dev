@@ -1,11 +1,12 @@
-#include "posixtestclient.h"
 
-#include "eposixclientsocket.h"
-#include "eposixclientsocketplatform.h"
-
+// library headers
 #include "ib/IBString.h"
 #include "ib/Contract.h"
 #include "ib/Order.h"
+
+// local headers
+#include "eposixclientsocket.h"
+#include "posixtestclient.h"
 
 #include <iostream>
 using std::cout;
@@ -18,254 +19,262 @@ const int SLEEP_BETWEEN_PINGS = 30; // seconds
 
 ///////////////////////////////////////////////////////////
 // member funcs
-PosixTestClient::PosixTestClient()
-	: client_(new EPosixClientSocket(this))
+TwsClient::TwsClient()
+	: client_(new TwsSocket(*this))
 	, state_(ST_CONNECT)
 	, sleepDeadline_(0)
 	, oid_(0)
 {
 }
 
-PosixTestClient::~PosixTestClient()
+TwsClient::~TwsClient()
 {
 }
 
 bool
-PosixTestClient::connect(const char *host, unsigned int port, int clientId)
+TwsClient::connect(const char *host, unsigned int port, int clientId)
 {
-	// trying to connect
-	printf("Connecting to %s:%d clientId:%d\n", !(host && *host) ? "127.0.0.1" : host, port, clientId);
+   if (isConnected())
+      return true;
 
-	bool bRes = client_->eConnect(host, port, clientId);
+   // trying to connect
+   printf("Connecting to %s:%d clientId:%d\n", !(host && *host) ? "127.0.0.1" : host, port, clientId);
 
-	if (bRes) {
-		printf("Connected to %s:%d clientId:%d\n", !(host && *host) ? "127.0.0.1" : host, port, clientId);
-	}
-	else
-		printf("Cannot connect to %s:%d clientId:%d\n", !(host && *host) ? "127.0.0.1" : host, port, clientId);
+   bool bRes = client_->eConnect(host, port, clientId);
 
-	return bRes;
+   if (bRes) {
+      printf("Connected to %s:%d clientId:%d\n", !(host && *host) ? "127.0.0.1" : host, port, clientId);
+   }
+   else
+      printf("Cannot connect to %s:%d clientId:%d\n", !(host && *host) ? "127.0.0.1" : host, port, clientId);
+
+   return bRes;
 }
 
 void
-PosixTestClient::disconnect() const
+TwsClient::disconnect() const
 {
-	client_->eDisconnect();
+   client_->eDisconnect();
 
-	printf ("Disconnected\n");
+   printf ("Disconnected\n");
 }
 
 bool
-PosixTestClient::isConnected() const
+TwsClient::isConnected() const
 {
-	return client_->isConnected();
+   return client_->isConnected();
 }
 
 void
-PosixTestClient::processMessages()
+TwsClient::processMessages()
 {
-	fd_set readSet, writeSet, errorSet;
+   fd_set readSet, writeSet, errorSet;
 
-	struct timeval tval;
-	tval.tv_usec = 0;
-	tval.tv_sec = 0;
+   struct timeval tval;
+   tval.tv_usec = 0;
+   tval.tv_sec = 0;
 
-	time_t now = time(NULL);
+   time_t now = time(NULL);
 
-	switch (state_) {
-		case ST_PLACEORDER:
-			placeOrder();
-			break;
-		case ST_PLACEORDER_ACK:
-			break;
-		case ST_CANCELORDER:
-			cancelOrder();
-			break;
-		case ST_CANCELORDER_ACK:
-			break;
-		case ST_PING:
-			reqCurrentTime();
-			break;
-		case ST_PING_ACK:
-			if (sleepDeadline_ < now) {
-				disconnect();
-				return;
-			}
-			break;
-		case ST_IDLE:
-			if (sleepDeadline_ < now) {
-				state_ = ST_PING;
-				return;
-			}
-			break;
-	}
+   switch (state_) {
+      case ST_PLACEORDER:
+         placeOrder();
+         break;
+      case ST_PLACEORDER_ACK:
+         break;
+      case ST_CANCELORDER:
+         cancelOrder();
+         break;
+      case ST_CANCELORDER_ACK:
+         break;
+      case ST_PING:
+         reqCurrentTime();
+         break;
+      case ST_PING_ACK:
+         if (sleepDeadline_ < now) {
+            disconnect();
+            return;
+         }
+         break;
+      case ST_IDLE:
+         if (sleepDeadline_ < now) {
+            state_ = ST_PING;
+            return;
+         }
+         break;
+   }
 
-	if (sleepDeadline_ > 0) {
-		// initialize timeout with sleepDeadline_ - now
-		tval.tv_sec = sleepDeadline_ - now;
-	}
+   if (sleepDeadline_ > 0) {
+      // initialize timeout with sleepDeadline_ - now
+      tval.tv_sec = sleepDeadline_ - now;
+   }
 
-	if (client_->fd() >= 0 ) {
+   if (client_->fd() < 0 )
+      return;
 
-		FD_ZERO(&readSet);
-		errorSet = writeSet = readSet;
+   FD_ZERO(&readSet);
+   errorSet = writeSet = readSet;
 
-		FD_SET(client_->fd(), &readSet);
+   FD_SET(client_->fd(), &readSet);
 
-		if (!client_->isOutBufferEmpty())
-			FD_SET(client_->fd(), &writeSet);
+   if (!client_->isOutBufferEmpty())
+      FD_SET(client_->fd(), &writeSet);
 
-		FD_CLR(client_->fd(), &errorSet);
+   FD_CLR(client_->fd(), &errorSet);
 
-		int ret = select(client_->fd() + 1, &readSet, &writeSet, &errorSet, &tval);
+   int ret = select(client_->fd() + 1, &readSet, &writeSet, &errorSet, &tval);
 
-		if (ret == 0) { // timeout
-			return;
-		}
+   // timeout
+   if (ret == 0)
+      return;
 
-		if (ret < 0) {	// error
-			disconnect();
-			return;
-		}
+   if (ret < 0) {	// error
+      disconnect();
+      return;
+   }
 
-		if (client_->fd() < 0)
-			return;
+   if (client_->fd() < 0)
+      return;
 
-		if (FD_ISSET(client_->fd(), &errorSet)) {
-			// error on socket
-			client_->onError();
-		}
+   int socketError = FD_ISSET(client_->fd(), &errorSet);
+   if (socketError)
+      client_->onError();
 
-		if (client_->fd() < 0)
-			return;
+   if (client_->fd() < 0)
+      return;
 
-		if (FD_ISSET(client_->fd(), &writeSet)) {
-			// socket is ready for writing
-			client_->onSend();
-		}
+   int writeReady = FD_ISSET(client_->fd(), &writeSet);
+   if (writeReady)
+      client_->onSend();
 
-		if (client_->fd() < 0)
-			return;
+   if (client_->fd() < 0)
+      return;
 
-		if (FD_ISSET(client_->fd(), &readSet)) {
-			// socket is ready for reading
-			client_->onReceive();
-		}
-	}
+   int readReady = FD_ISSET(client_->fd(), &readSet);
+   if (readReady)
+      client_->onReceive();
 }
 
 //////////////////////////////////////////////////////////////////
 // methods
 void
-PosixTestClient::reqCurrentTime()
+TwsClient::reqCurrentTime()
 {
-	printf("Requesting Current Time\n");
+   printf("Requesting Current Time\n");
 
-	// set ping deadline to "now + n seconds"
-	sleepDeadline_ = time(NULL) + PING_DEADLINE;
+   // set ping deadline to "now + n seconds"
+   sleepDeadline_ = time(NULL) + PING_DEADLINE;
 
-	state_ = ST_PING_ACK;
+   state_ = ST_PING_ACK;
 
-	client_->reqCurrentTime();
+   client_->reqCurrentTime();
 }
 
 void
-PosixTestClient::placeOrder()
+TwsClient::placeOrder()
 {
-	Contract contract;
-	Order order;
+   Contract contract;
+   Order order;
 
-	contract.symbol = "MSFT";
-	contract.secType = "STK";
-	contract.exchange = "SMART";
-	contract.currency = "USD";
+   contract.symbol   = "AAPL";
+   contract.secType  = "STK";
+   contract.exchange = "SMART";
+   contract.currency = "USD";
 
-	order.action = "BUY";
-	order.totalQuantity = 1000;
-	order.orderType = "LMT";
-	order.lmtPrice = 0.01;
+   order.action        = "BUY";
+   order.totalQuantity = 1000;
+   order.orderType     = "LMT";
+   order.lmtPrice      = 0.01;
 
-	printf("Placing Order %ld: %s %ld %s at %f\n", oid_, order.action.c_str(), order.totalQuantity, contract.symbol.c_str(), order.lmtPrice);
+   printf("Placing Order %ld: %s %ld %s at %f\n", oid_, order.action.c_str(), order.totalQuantity, contract.symbol.c_str(), order.lmtPrice);
 
-	state_ = ST_PLACEORDER_ACK;
+   state_ = ST_PLACEORDER_ACK;
 
-	client_->placeOrder(oid_, contract, order);
+   //client_->placeOrder(oid_, contract, order);
+   client_->reqMktData(1, contract, "221,165,236,258", false);
 }
 
 void
-PosixTestClient::cancelOrder()
+TwsClient::cancelOrder()
 {
-	printf("Cancelling Order %ld\n", oid_);
+   printf("Cancelling Order %ld\n", oid_);
 
-	state_ = ST_CANCELORDER_ACK;
+   state_ = ST_CANCELORDER_ACK;
 
-	client_->cancelOrder(oid_);
+   client_->cancelOrder(oid_);
 }
 
 ///////////////////////////////////////////////////////////////////
 // events
 void
-PosixTestClient::orderStatus(OrderId orderId,
-                             const std::string& status,
-                             int filled,
-                             int remaining,
-                             double avgFillPrice,
-                             int permId,
-                             int parentId,
-                             double lastFillPrice,
-                             int clientId,
-                             const std::string& whyHeld)
+TwsClient::orderStatus(OrderId orderId,
+                       const std::string& status,
+                       int filled,
+                       int remaining,
+                       double avgFillPrice,
+                       int permId,
+                       int parentId,
+                       double lastFillPrice,
+                       int clientId,
+                       const std::string& whyHeld)
 
 {
-	if (orderId == oid_) {
-		if (state_ == ST_PLACEORDER_ACK && (status == "PreSubmitted" || status == "Submitted"))
-			state_ = ST_CANCELORDER;
+   if (orderId == oid_) {
+      if (state_ == ST_PLACEORDER_ACK && (status == "PreSubmitted" || status == "Submitted"))
+         state_ = ST_CANCELORDER;
 
-		if (state_ == ST_CANCELORDER_ACK && status == "Cancelled")
-			state_ = ST_PING;
+      if (state_ == ST_CANCELORDER_ACK && status == "Cancelled")
+         state_ = ST_PING;
 
-		printf("Order: id=%ld, status=%s\n", orderId, status.c_str());
-	}
+      printf("Order: id=%ld, status=%s\n", orderId, status.c_str());
+   }
 }
 
 void
-PosixTestClient::nextValidId(OrderId orderId)
+TwsClient::nextValidId(OrderId orderId)
 {
-	oid_ = orderId;
+   oid_ = orderId;
 
-	state_ = ST_PLACEORDER;
+   state_ = ST_PLACEORDER;
 }
 
 void
-PosixTestClient::currentTime(long time)
+TwsClient::currentTime(long time)
 {
-	if (state_ == ST_PING_ACK) {
-		time_t t = (time_t)time;
-		struct tm * timeinfo = localtime (&t);
-		printf("The current date/time is: %s", asctime(timeinfo));
+   if (state_ == ST_PING_ACK) {
+      time_t t = (time_t)time;
+      struct tm * timeinfo = localtime (&t);
+      printf("The current date/time is: %s", asctime(timeinfo));
 
-		time_t now = ::time(NULL);
-		sleepDeadline_ = now + SLEEP_BETWEEN_PINGS;
+      time_t now = ::time(NULL);
+      sleepDeadline_ = now + SLEEP_BETWEEN_PINGS;
 
-		state_ = ST_IDLE;
-	}
+      state_ = ST_IDLE;
+   }
 }
 
 void
-PosixTestClient::error(const int id, const int errorCode, const std::string errorString)
-{
-	if (id == -1 && errorCode == 1100) // if "Connectivity between IB and TWS has been lost"
-		disconnect();
-}
-
-void
-PosixTestClient::tickPrice(TickerId tickerId,
-                           TickType field,
-                           double price,
-                           int canAutoExecute)
+TwsClient::error(const int id, const int errorCode, const std::string errorString)
 {
    cout
-      << "PosixTestClient::tickPrice: "
+      << "TwsClient::error: "
+      << PRINT(id)
+      << PRINT(errorCode)
+      << PRINT(errorString)
+      << endl;
+
+   if (id == -1 && errorCode == 1100) // if "Connectivity between IB and TWS has been lost"
+      disconnect();
+}
+
+void
+TwsClient::tickPrice(TickerId tickerId,
+                     TickType field,
+                     double price,
+                     int canAutoExecute)
+{
+   cout
+      << "TwsClient::tickPrice: "
       << PRINT(tickerId)
       << PRINT(field)
       << PRINT(price)
@@ -274,10 +283,10 @@ PosixTestClient::tickPrice(TickerId tickerId,
 }
 
 void
-PosixTestClient::tickSize(TickerId tickerId, TickType field, int size)
+TwsClient::tickSize(TickerId tickerId, TickType field, int size)
 {
    cout
-      << "PosixTestClient::tickSize: "
+      << "TwsClient::tickSize: "
       << PRINT(tickerId)
       << PRINT(field)
       << PRINT(size)
@@ -285,19 +294,19 @@ PosixTestClient::tickSize(TickerId tickerId, TickType field, int size)
 }
 
 void
-PosixTestClient::tickOptionComputation(TickerId tickerId,
-                                       TickType tickType,
-                                       double impliedVol,
-                                       double delta,
-                                       double optPrice,
-                                       double pvDividend,
-                                       double gamma,
-                                       double vega,
-                                       double theta,
-                                       double undPrice)
+TwsClient::tickOptionComputation(TickerId tickerId,
+                                 TickType tickType,
+                                 double impliedVol,
+                                 double delta,
+                                 double optPrice,
+                                 double pvDividend,
+                                 double gamma,
+                                 double vega,
+                                 double theta,
+                                 double undPrice)
 {
    cout
-      << "PosixTestClient::tickOptionComputation: "
+      << "TwsClient::tickOptionComputation: "
       << PRINT(tickerId)
       << PRINT(tickType)
       << PRINT(impliedVol)
@@ -312,10 +321,10 @@ PosixTestClient::tickOptionComputation(TickerId tickerId,
 }
 
 void
-PosixTestClient::tickGeneric(TickerId tickerId, TickType tickType, double value)
+TwsClient::tickGeneric(TickerId tickerId, TickType tickType, double value)
 {
    cout
-      << "PosixTestClient::tickGeneric: "
+      << "TwsClient::tickGeneric: "
       << PRINT(tickerId)
       << PRINT(tickType)
       << PRINT(value)
@@ -323,10 +332,10 @@ PosixTestClient::tickGeneric(TickerId tickerId, TickType tickType, double value)
 }
 
 void
-PosixTestClient::tickString(TickerId tickerId, TickType tickType, const std::string& value)
+TwsClient::tickString(TickerId tickerId, TickType tickType, const std::string& value)
 {
    cout
-      << "PosixTestClient::tickString: "
+      << "TwsClient::tickString: "
       << PRINT(tickerId)
       << PRINT(tickType)
       << PRINT(value)
@@ -334,18 +343,18 @@ PosixTestClient::tickString(TickerId tickerId, TickType tickType, const std::str
 }
 
 void
-PosixTestClient::tickEFP(TickerId tickerId,
-                         TickType tickType,
-                         double basisPoints,
-                         const std::string& formattedBasisPoints,
-                         double totalDividends,
-                         int holdDays,
-                         const std::string& futureExpiry,
-                         double dividendImpact,
-                         double dividendsToExpiry)
+TwsClient::tickEFP(TickerId tickerId,
+                   TickType tickType,
+                   double basisPoints,
+                   const std::string& formattedBasisPoints,
+                   double totalDividends,
+                   int holdDays,
+                   const std::string& futureExpiry,
+                   double dividendImpact,
+                   double dividendsToExpiry)
 {
    cout
-      << "PosixTestClient::tickEFP: "
+      << "TwsClient::tickEFP: "
       << PRINT(tickerId)
       << PRINT(tickType)
       << PRINT(basisPoints)
@@ -359,43 +368,43 @@ PosixTestClient::tickEFP(TickerId tickerId,
 }
 
 void
-PosixTestClient::openOrder(OrderId orderId,
-                           const Contract& c,
-                           const Order& o,
-                           const OrderState& ostate)
+TwsClient::openOrder(OrderId orderId,
+                     const Contract& c,
+                     const Order& o,
+                     const OrderState& ostate)
 {
    cout
-      << "PosixTestClient::openOrder: "
+      << "TwsClient::openOrder: "
       << PRINT(orderId)
       << endl;
 }
 
 void
-PosixTestClient::openOrderEnd()
+TwsClient::openOrderEnd()
 {}
 
 void
-PosixTestClient::winError(const std::string& str, int lastError)
+TwsClient::winError(const std::string& str, int lastError)
 {
    cout
-      << "PosixTestClient::winError: "
+      << "TwsClient::winError: "
       << PRINT(str)
       << PRINT(lastError)
       << endl;
 }
 
 void
-PosixTestClient::connectionClosed()
+TwsClient::connectionClosed()
 {}
 
 void
-PosixTestClient::updateAccountValue(const std::string& key,
-                                    const std::string& val,
-                                    const std::string& currency,
-                                    const std::string& accountName)
+TwsClient::updateAccountValue(const std::string& key,
+                              const std::string& val,
+                              const std::string& currency,
+                              const std::string& accountName)
 {
    cout
-      << "PosixTestClient::updateAccountValue: "
+      << "TwsClient::updateAccountValue: "
       << PRINT(key)
       << PRINT(val)
       << PRINT(currency)
@@ -404,17 +413,17 @@ PosixTestClient::updateAccountValue(const std::string& key,
 }
 
 void
-PosixTestClient::updatePortfolio(const Contract& contract,
-                                 int position,
-                                 double marketPrice,
-                                 double marketValue,
-                                 double averageCost,
-                                 double unrealizedPNL,
-                                 double realizedPNL,
-                                 const std::string& accountName)
+TwsClient::updatePortfolio(const Contract& contract,
+                           int position,
+                           double marketPrice,
+                           double marketValue,
+                           double averageCost,
+                           double unrealizedPNL,
+                           double realizedPNL,
+                           const std::string& accountName)
 {
    cout
-      << "PosixTestClient::updatePortfolio: "
+      << "TwsClient::updatePortfolio: "
       << PRINT(position)
       << PRINT(marketPrice)
       << PRINT(marketValue)
@@ -426,79 +435,79 @@ PosixTestClient::updatePortfolio(const Contract& contract,
 }
 
 void
-PosixTestClient::updateAccountTime(const std::string& timeStamp)
+TwsClient::updateAccountTime(const std::string& timeStamp)
 {
    cout
-      << "PosixTestClient::updateAccountTime: "
+      << "TwsClient::updateAccountTime: "
       << PRINT(timeStamp)
       << endl;
 }
 
 void
-PosixTestClient::accountDownloadEnd(const std::string& accountName)
+TwsClient::accountDownloadEnd(const std::string& accountName)
 {
    cout
-      << "PosixTestClient::accountDownloadEnd: "
+      << "TwsClient::accountDownloadEnd: "
       << PRINT(accountName)
       << endl;
 }
 
 void
-PosixTestClient::contractDetails(int reqId, const ContractDetails& contractDetails)
+TwsClient::contractDetails(int reqId, const ContractDetails& contractDetails)
 {
    cout
-      << "PosixTestClient::contractDetails: "
+      << "TwsClient::contractDetails: "
       << PRINT(reqId)
       << endl;
 }
 
 void
-PosixTestClient::bondContractDetails(int reqId, const ContractDetails& contractDetails)
+TwsClient::bondContractDetails(int reqId, const ContractDetails& contractDetails)
 {
    cout
-      << "PosixTestClient::bondContractDetails: "
+      << "TwsClient::bondContractDetails: "
       << PRINT(reqId)
       << endl;
 }
 
 void
-PosixTestClient::contractDetailsEnd(int reqId)
+TwsClient::contractDetailsEnd(int reqId)
 {
    cout
-      << "PosixTestClient::contractDetailsEnd: "
+      << "TwsClient::contractDetailsEnd: "
       << PRINT(reqId)
       << endl;
 }
 
 void
-PosixTestClient::execDetails(int reqId, const Contract& contract, const Execution& execution)
+TwsClient::execDetails(int reqId, const Contract& contract, const Execution& execution)
 {
    cout
-      << "PosixTestClient::execDetails: "
+      << "TwsClient::execDetails: "
       << PRINT(reqId)
       << endl;
 }
 
 void
-PosixTestClient::execDetailsEnd(int reqId)
+TwsClient::execDetailsEnd(int reqId)
 {
    cout
-      << "PosixTestClient::execDetailsEnd: "
+      << "TwsClient::execDetailsEnd: "
       << PRINT(reqId)
       << endl;
 }
 
 
 void
-PosixTestClient::updateMktDepth(TickerId id,
-                                int position,
-                                int operation,
-                                int side,
-                                double price,
-                                int size)
+TwsClient::updateMktDepth(TickerId id,
+                          int position,
+                          int operation,
+                          int side,
+                          double price,
+                          int size)
 {
    cout
-      << "PosixTestClient::updateMktDepth: "
+      << "TwsClient::updateMktDepth: "
       << PRINT(id)
       << PRINT(position)
       << PRINT(operation)
@@ -509,16 +518,16 @@ PosixTestClient::updateMktDepth(TickerId id,
 }
 
 void
-PosixTestClient::updateMktDepthL2(TickerId id,
-                                  int position,
-                                  std::string marketMaker,
-                                  int operation,
-                                  int side,
-                                  double price,
-                                  int size)
+TwsClient::updateMktDepthL2(TickerId id,
+                            int position,
+                            std::string marketMaker,
+                            int operation,
+                            int side,
+                            double price,
+                            int size)
 {
    cout
-      << "PosixTestClient::updateMktDepthL2: "
+      << "TwsClient::updateMktDepthL2: "
       << PRINT(id)
       << PRINT(position)
       << PRINT(marketMaker)
@@ -530,13 +539,13 @@ PosixTestClient::updateMktDepthL2(TickerId id,
 }
 
 void
-PosixTestClient::updateNewsBulletin(int msgId,
-                                    int msgType,
-                                    const std::string& newsMessage,
-                                    const std::string& originExch)
+TwsClient::updateNewsBulletin(int msgId,
+                              int msgType,
+                              const std::string& newsMessage,
+                              const std::string& originExch)
 {
    cout
-      << "PosixTestClient::updateNewsBulletin: "
+      << "TwsClient::updateNewsBulletin: "
       << PRINT(msgId)
       << PRINT(msgType)
       << PRINT(newsMessage)
@@ -545,38 +554,38 @@ PosixTestClient::updateNewsBulletin(int msgId,
 }
 
 void
-PosixTestClient::managedAccounts(const std::string& accountsList)
+TwsClient::managedAccounts(const std::string& accountsList)
 {
    cout
-      << "PosixTestClient::managedAccounts: "
+      << "TwsClient::managedAccounts: "
       << PRINT(accountsList)
       << endl;
 }
 
 void
-PosixTestClient::receiveFA(faDataType pFaDataType, const std::string& cxml)
+TwsClient::receiveFA(faDataType pFaDataType, const std::string& cxml)
 {
    cout
-      << "PosixTestClient::receiveFA: "
+      << "TwsClient::receiveFA: "
       << PRINT(pFaDataType)
       << PRINT(cxml)
       << endl;
 }
 
 void
-PosixTestClient::historicalData(TickerId reqId,
-                                const std::string& date,
-                                double open,
-                                double high,
-                                double low,
-                                double close,
-                                int volume,
-                                int barCount,
-                                double WAP,
-                                int hasGaps)
+TwsClient::historicalData(TickerId reqId,
+                          const std::string& date,
+                          double open,
+                          double high,
+                          double low,
+                          double close,
+                          int volume,
+                          int barCount,
+                          double WAP,
+                          int hasGaps)
 {
    cout
-      << "PosixTestClient::historicalData: "
+      << "TwsClient::historicalData: "
       << PRINT(reqId)
       << PRINT(date)
       << PRINT(open)
@@ -591,25 +600,25 @@ PosixTestClient::historicalData(TickerId reqId,
 }
 
 void
-PosixTestClient::scannerParameters(const std::string& xml)
+TwsClient::scannerParameters(const std::string& xml)
 {
    cout
-      << "PosixTestClient::scannerParameters: "
+      << "TwsClient::scannerParameters: "
       << PRINT(xml)
       << endl;
 }
 
 void
-PosixTestClient::scannerData(int reqId,
-                             int rank,
-                             const ContractDetails& contractDetails,
-                             const std::string& distance,
-                             const std::string& benchmark,
-                             const std::string& projection,
-                             const std::string& legsStr)
+TwsClient::scannerData(int reqId,
+                       int rank,
+                       const ContractDetails& contractDetails,
+                       const std::string& distance,
+                       const std::string& benchmark,
+                       const std::string& projection,
+                       const std::string& legsStr)
 {
    cout
-      << "PosixTestClient::scannerData: "
+      << "TwsClient::scannerData: "
       << PRINT(reqId)
       << PRINT(rank)
       << PRINT(distance)
@@ -620,27 +629,27 @@ PosixTestClient::scannerData(int reqId,
 }
 
 void
-PosixTestClient::scannerDataEnd(int reqId)
+TwsClient::scannerDataEnd(int reqId)
 {
    cout
-      << "PosixTestClient::scannerDataEnd: "
+      << "TwsClient::scannerDataEnd: "
       << PRINT(reqId)
       << endl;
 }
 
 void
-PosixTestClient::realtimeBar(TickerId reqId,
-                             long time,
-                             double open,
-                             double high,
-                             double low,
-                             double close,
-                             long volume,
-                             double wap,
-                             int count)
+TwsClient::realtimeBar(TickerId reqId,
+                       long time,
+                       double open,
+                       double high,
+                       double low,
+                       double close,
+                       long volume,
+                       double wap,
+                       int count)
 {
    cout
-      << "PosixTestClient::realtimeBar: "
+      << "TwsClient::realtimeBar: "
       << PRINT(reqId)
       << PRINT(time)
       << PRINT(open)
@@ -654,38 +663,38 @@ PosixTestClient::realtimeBar(TickerId reqId,
 }
 
 void
-PosixTestClient::fundamentalData(TickerId reqId, const std::string& data)
+TwsClient::fundamentalData(TickerId reqId, const std::string& data)
 {
    cout
-      << "PosixTestClient::fundamentalData: "
+      << "TwsClient::fundamentalData: "
       << PRINT(reqId)
       << PRINT(data)
       << endl;
 }
 
 void
-PosixTestClient::deltaNeutralValidation(int reqId, const UnderComp& underComp)
+TwsClient::deltaNeutralValidation(int reqId, const UnderComp& underComp)
 {
    cout
-      << "PosixTestClient::deltaNeutralValidation: "
+      << "TwsClient::deltaNeutralValidation: "
       << PRINT(reqId)
       << endl;
 }
 
 void
-PosixTestClient::tickSnapshotEnd(int reqId)
+TwsClient::tickSnapshotEnd(int reqId)
 {
    cout
-      << "PosixTestClient::tickSnapshotEnd: "
+      << "TwsClient::tickSnapshotEnd: "
       << PRINT(reqId)
       << endl;
 }
 
 void
-PosixTestClient::marketDataType(TickerId reqId, int marketDataType)
+TwsClient::marketDataType(TickerId reqId, int marketDataType)
 {
    cout
-      << "PosixTestClient::marketDataType: "
+      << "TwsClient::marketDataType: "
       << PRINT(reqId)
       << PRINT(marketDataType)
       << endl;

@@ -5,16 +5,15 @@
 
 class EWrapper;
 
-class EPosixClientSocket : public EClientSocketBase
+class TwsSocket : public EClientSocketBase
 {
 public:
 
-	explicit EPosixClientSocket(EWrapper *ptr);
-	~EPosixClientSocket();
+	explicit TwsSocket(EWrapper& ptr);
+	~TwsSocket();
 
-	// override virtual funcs from EClient
-	bool eConnect(const char* host, unsigned int port, int clientId=0);
-	void eDisconnect();
+	virtual bool eConnect(const char* host, unsigned int port, int clientId=0);
+	virtual void eDisconnect();
 
 	bool isSocketOK() const;
 	int fd() const;
@@ -25,23 +24,12 @@ private:
 	int receive(char* buf, size_t sz);
 
 public:
-	// callback from socket
-	void onReceive();
-	void onSend();
-	void onError();
-
-private:
-
-	void onConnect();
-	void onClose();
-
-public:
 	// helper
 	bool handleSocketError();
 
 private:
 
-	int m_fd;
+	int fd_;
 };
 
 #endif

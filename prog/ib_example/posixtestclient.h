@@ -3,10 +3,11 @@
 
 #include "ib/EWrapper.h"
 
+#include <boost/scoped_ptr.hpp>
 #include <memory>
 #include <stdio.h>
 
-class EPosixClientSocket;
+class TwsSocket;
 
 enum State {
 	ST_CONNECT,
@@ -20,12 +21,12 @@ enum State {
 };
 
 
-class PosixTestClient : public EWrapper
+class TwsClient : public EWrapper
 {
 public:
 
-	PosixTestClient();
-	~PosixTestClient();
+	TwsClient();
+	~TwsClient();
 
 	void processMessages();
 
@@ -41,49 +42,50 @@ private:
 	void placeOrder();
 	void cancelOrder();
 
-public:
+private:
+
 	// events
-	void tickPrice(TickerId tickerId, TickType field, double price, int canAutoExecute);
-	void tickSize(TickerId tickerId, TickType field, int size);
-	void tickOptionComputation(TickerId tickerId, TickType tickType, double impliedVol, double delta, double optPrice, double pvDividend, double gamma, double vega, double theta, double undPrice);
-	void tickGeneric(TickerId tickerId, TickType tickType, double value);
-	void tickString(TickerId tickerId, TickType tickType, const std::string& value);
-	void tickEFP(TickerId tickerId, TickType tickType, double basisPoints, const std::string& formattedBasisPoints, double totalDividends, int holdDays, const std::string& futureExpiry, double dividendImpact, double dividendsToExpiry);
-	void orderStatus(OrderId orderId, const std::string &status, int filled, int remaining, double avgFillPrice, int permId, int parentId, double lastFillPrice, int clientId, const std::string& whyHeld);
-	void openOrder(OrderId orderId, const Contract&, const Order&, const OrderState&);
-	void openOrderEnd();
-	void winError(const std::string &str, int lastError);
-	void connectionClosed();
-	void updateAccountValue(const std::string& key, const std::string& val, const std::string& currency, const std::string& accountName);
-	void updatePortfolio(const Contract& contract, int position, double marketPrice, double marketValue, double averageCost, double unrealizedPNL, double realizedPNL, const std::string& accountName);
-	void updateAccountTime(const std::string& timeStamp);
-	void accountDownloadEnd(const std::string& accountName);
-	void nextValidId(OrderId orderId);
-	void contractDetails(int reqId, const ContractDetails& contractDetails);
-	void bondContractDetails(int reqId, const ContractDetails& contractDetails);
-	void contractDetailsEnd(int reqId);
-	void execDetails(int reqId, const Contract& contract, const Execution& execution);
-	void execDetailsEnd(int reqId);
-	void error(const int id, const int errorCode, const std::string errorString);
-	void updateMktDepth(TickerId id, int position, int operation, int side, double price, int size);
-	void updateMktDepthL2(TickerId id, int position, std::string marketMaker, int operation, int side, double price, int size);
-	void updateNewsBulletin(int msgId, int msgType, const std::string& newsMessage, const std::string& originExch);
-	void managedAccounts(const std::string& accountsList);
-	void receiveFA(faDataType pFaDataType, const std::string& cxml);
-	void historicalData(TickerId reqId, const std::string& date, double open, double high, double low, double close, int volume, int barCount, double WAP, int hasGaps);
-	void scannerParameters(const std::string &xml);
-	void scannerData(int reqId, int rank, const ContractDetails &contractDetails, const std::string &distance, const std::string &benchmark, const std::string &projection, const std::string &legsStr);
-	void scannerDataEnd(int reqId);
-	void realtimeBar(TickerId reqId, long time, double open, double high, double low, double close, long volume, double wap, int count);
-	void currentTime(long time);
-	void fundamentalData(TickerId reqId, const std::string& data);
-	void deltaNeutralValidation(int reqId, const UnderComp& underComp);
-	void tickSnapshotEnd(int reqId);
-	void marketDataType(TickerId reqId, int marketDataType);
+	virtual void accountDownloadEnd(const std::string& accountName);
+	virtual void bondContractDetails(int reqId, const ContractDetails& contractDetails);
+	virtual void connectionClosed();
+	virtual void contractDetails(int reqId, const ContractDetails& contractDetails);
+	virtual void contractDetailsEnd(int reqId);
+	virtual void currentTime(long time);
+	virtual void deltaNeutralValidation(int reqId, const UnderComp& underComp);
+	virtual void error(const int id, const int errorCode, const std::string errorString);
+	virtual void execDetails(int reqId, const Contract& contract, const Execution& execution);
+	virtual void execDetailsEnd(int reqId);
+	virtual void fundamentalData(TickerId reqId, const std::string& data);
+	virtual void historicalData(TickerId reqId, const std::string& date, double open, double high, double low, double close, int volume, int barCount, double WAP, int hasGaps);
+	virtual void managedAccounts(const std::string& accountsList);
+	virtual void marketDataType(TickerId reqId, int marketDataType);
+	virtual void nextValidId(OrderId orderId);
+	virtual void openOrder(OrderId orderId, const Contract&, const Order&, const OrderState&);
+	virtual void openOrderEnd();
+	virtual void orderStatus(OrderId orderId, const std::string &status, int filled, int remaining, double avgFillPrice, int permId, int parentId, double lastFillPrice, int clientId, const std::string& whyHeld);
+	virtual void realtimeBar(TickerId reqId, long time, double open, double high, double low, double close, long volume, double wap, int count);
+	virtual void receiveFA(faDataType pFaDataType, const std::string& cxml);
+	virtual void scannerData(int reqId, int rank, const ContractDetails &contractDetails, const std::string &distance, const std::string &benchmark, const std::string &projection, const std::string &legsStr);
+	virtual void scannerDataEnd(int reqId);
+	virtual void scannerParameters(const std::string &xml);
+	virtual void tickEFP(TickerId tickerId, TickType tickType, double basisPoints, const std::string& formattedBasisPoints, double totalDividends, int holdDays, const std::string& futureExpiry, double dividendImpact, double dividendsToExpiry);
+	virtual void tickGeneric(TickerId tickerId, TickType tickType, double value);
+	virtual void tickOptionComputation(TickerId tickerId, TickType tickType, double impliedVol, double delta, double optPrice, double pvDividend, double gamma, double vega, double theta, double undPrice);
+	virtual void tickPrice(TickerId tickerId, TickType field, double price, int canAutoExecute);
+	virtual void tickSize(TickerId tickerId, TickType field, int size);
+	virtual void tickSnapshotEnd(int reqId);
+	virtual void tickString(TickerId tickerId, TickType tickType, const std::string& value);
+	virtual void updateAccountTime(const std::string& timeStamp);
+	virtual void updateAccountValue(const std::string& key, const std::string& val, const std::string& currency, const std::string& accountName);
+	virtual void updateMktDepth(TickerId id, int position, int operation, int side, double price, int size);
+	virtual void updateMktDepthL2(TickerId id, int position, std::string marketMaker, int operation, int side, double price, int size);
+	virtual void updateNewsBulletin(int msgId, int msgType, const std::string& newsMessage, const std::string& originExch);
+	virtual void updatePortfolio(const Contract& contract, int position, double marketPrice, double marketValue, double averageCost, double unrealizedPNL, double realizedPNL, const std::string& accountName);
+	virtual void winError(const std::string &str, int lastError);
 
 private:
 
-	std::auto_ptr<EPosixClientSocket> client_;
+	boost::scoped_ptr<TwsSocket> client_;
 	State state_;
 	time_t sleepDeadline_;
 

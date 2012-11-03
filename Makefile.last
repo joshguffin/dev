@@ -24,6 +24,7 @@ endef
 ###################################################################################
 define CREATE_TARGET
 $(eval LIBRARIES="$(LIBRARIES) $($(1)_LIBRARIES)")
+-include $($(1)_OBJECTS:.o=.d)
 $(1): $($(1)_OBJECTS)
 	$(CXX) $(LIBS) $(LDFLAGS) $(foreach object, $($(1)_OBJECTS), $(object)) \
 		$($(1)_LDFLAGS) $(call LIST_LIBRARIES,$(1)) -o $(1)
