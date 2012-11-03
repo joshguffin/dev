@@ -9,11 +9,11 @@ class EPosixClientSocket : public EClientSocketBase
 {
 public:
 
-	explicit EPosixClientSocket( EWrapper *ptr);
+	explicit EPosixClientSocket(EWrapper *ptr);
 	~EPosixClientSocket();
 
 	// override virtual funcs from EClient
-	bool eConnect( const char *host, unsigned int port, int clientId=0);
+	bool eConnect(const char* host, unsigned int port, int clientId=0);
 	void eDisconnect();
 
 	bool isSocketOK() const;
@@ -21,8 +21,8 @@ public:
 
 private:
 
-	int send( const char* buf, size_t sz);
-	int receive( char* buf, size_t sz);
+	int send(const char* buf, size_t sz);
+	int receive(char* buf, size_t sz);
 
 public:
 	// callback from socket
