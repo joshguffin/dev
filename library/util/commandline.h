@@ -83,7 +83,7 @@ CommandLine::Flag<T>::Parse(const std::string& flag, const std::string& descript
    if (value.empty())
       abort();
 
-   return Cast<T>(value);
+   return Cast(value);
 }
 
 template <typename T>
@@ -94,7 +94,7 @@ CommandLine::Flag<T>::Parse(const std::string& flag, const std::string& descript
    if (value.empty())
       return defaultValue;
 
-   return Cast<T>(value);
+   return Cast(value);
 }
 
 template <typename T>

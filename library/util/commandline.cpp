@@ -24,7 +24,7 @@ CommandLine::Find(const std::string& flag)
    Arguments::const_iterator end = Instance().arguments_.end();
 
    for (; it != end; ++it) {
-      if (*it != flag) 
+      if (*it != flag)
          continue;
       ++it;
       return (it == end ? empty : *it);
@@ -40,7 +40,7 @@ CommandLine::Present(const std::string& flag)
    Arguments::const_iterator end = Instance().arguments_.end();
 
    for (; it != end; ++it) {
-      if (*it == flag) 
+      if (*it == flag)
          break;
    }
 
