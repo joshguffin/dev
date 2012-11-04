@@ -1,17 +1,8 @@
-// just compile this and link with -lboost_unit_test_framework
-#include "base/headermacros.h"
 #include "system/common.h"
-
-#include <iostream>
-#include <sstream>
-
-// don't screw up boost macro with the system/log macro
-#undef WARN
-
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MAIN
-#include <boost/test/unit_test.hpp>
+#include "system/unittest.h"
 #include "string/integertostring.h"
+
+#include <sstream>
 
 // === SPARSE enums ===========================================================
 

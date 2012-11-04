@@ -1,11 +1,9 @@
-#include <iostream>
+#include "system/common.h"
+#include "system/unittest.h"
+#include "string/stringtable.h"
+
 #include <sstream>
 #include <ctype.h>
-
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MAIN
-#include <boost/test/unit_test.hpp>
-#include "string/stringtable.h"
 
 using namespace std;
 using namespace StringLib;

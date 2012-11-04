@@ -1,18 +1,9 @@
-// just compile this and link with -lboost_unit_test_framework
-#include <iostream>
-#include <sstream>
-
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MAIN
-#include <boost/test/unit_test.hpp>
+#include "system/common.h"
+#include "system/unittest.h"
 #include "util/persistence.h"
-#include "system/headermacros.h"
 
+#include <sstream>
 #include <cstdio>
-#include <string>
-
-using std::cout;
-using std::endl;
 
 BOOST_AUTO_TEST_CASE(integer)
 {
