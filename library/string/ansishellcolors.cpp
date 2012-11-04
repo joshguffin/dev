@@ -1,3 +1,5 @@
+#include "system/common.h"
+
 #include "string/ansishellcolors.h"
 #include "string/integertostring.h"
 

@@ -5,8 +5,6 @@
 #include <string>
 #include <boost/lexical_cast.hpp>
 
-#include "include/headermacros.h"
-
 namespace UtilLib {
 
 // --- CommandLine declaration -------------------------------------------------

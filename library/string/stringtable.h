@@ -1,8 +1,6 @@
 #ifndef string_stringtable_h_INCLUDED
 #define string_stringtable_h_INCLUDED
 
-#include "include/headermacros.h"
-
 #include <vector>
 #include <string>
 #include <sstream>

@@ -9,7 +9,7 @@
 #define WARN  SystemLib::Log::Level::Warning
 #define INFO  SystemLib::Log::Level::Info
 
-#include "include/headermacros.h"
+#include "base/headermacros.h"
 
 #include <fstream>
 #include <iostream>

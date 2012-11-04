@@ -1,7 +1,6 @@
 #ifndef string_ansishellcolors_h_INCLUDED
 #define string_ansishellcolors_h_INCLUDED
 
-#include "include/headermacros.h"
 #include <string>
 
 namespace StringLib {

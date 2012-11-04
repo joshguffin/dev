@@ -39,7 +39,7 @@
 //=== Enum implementation macros ===============================================
 
 #define IMPLEMENT_ENUM_PRINT(Type, Function)                                   \
-std::ostream&                                                                  \
+inline std::ostream&                                                           \
 operator<<(std::ostream& os, Type t) {                                         \
    return os << Function(t);                                                   \
 }
@@ -62,7 +62,7 @@ operator<<(std::ostream& os, Type t) {                                         \
       Unknown                                                                  \
    };                                                                          \
                                                                                \
-   static std::string ToString(Type t) {                                       \
+   static inline std::string ToString(Type t) {                                \
       switch (t) {                                                             \
          FieldsMacro(IMPLEMENT_##EnumType##_ENUM_TOSTRING_IMPL)                \
          default:                                                              \
@@ -72,7 +72,7 @@ operator<<(std::ostream& os, Type t) {                                         \
       }                                                                        \
    }                                                                           \
                                                                                \
-   static Type FromString(const std::string& str) {                            \
+   static inline Type FromString(const std::string& str) {                     \
       FieldsMacro(IMPLEMENT_##EnumType##_ENUM_FROMSTRING_IMPL)                 \
       return Unknown;                                                          \
    }

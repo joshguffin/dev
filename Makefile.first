@@ -17,7 +17,7 @@ MAKEPRINT  = "	[CXX] $*.cpp"
 #MAKEPRINT  = $(MAKESOURCE)
 MAKESTEM   = $(CXX) $(INCLUDES) $(USERCPPFLAGS) $(CCFLAGS) -c $*.cpp -o
 MAKESOURCE = $(MAKESTEM) $@
-MAKEDEPEND = $(MAKESTEM) $*.d -MM
+MAKEDEPEND = $(MAKESTEM) $*.d -MM -MQ $*.o
 LINKSTEM   = $(CXX) $(LIBS) $(LDFLAGS)
 
 INCLUDES = -I. -I$(LIBRARY) -I$(LIBRARY)/include -I/usr/local/include

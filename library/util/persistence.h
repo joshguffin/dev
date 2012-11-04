@@ -1,7 +1,6 @@
 #ifndef util_persistence_h_INCLUDED
 #define util_persistence_h_INCLUDED
 
-#include "include/headermacros.h"
 #include <fstream>
 #include <string>
 

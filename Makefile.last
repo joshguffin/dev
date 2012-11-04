@@ -12,20 +12,32 @@ $(foreach lib, $($(1)_LIBRARIES), $(CPPROOT)/library/lib/lib$(lib).a)
 endef
 
 ###################################################################################
-# Given a program name, specified by adding to TESTPROGS or APPPROGS, traverse
-# the list of desired objects and required libraries to produce the make target
+# Given a program name, specified by adding to APPPROGS, traverse the list of
+# desired objects and required libraries to produce the make target
 ###################################################################################
+APP_DEPENDS=
+APP_OBJECTS=
 define CREATE_TARGET
-$(eval LIBRARIES=$(LIBRARIES) $($(1)_LIBRARIES))
--include $($(1)_OBJECTS:.o=.d)
+
+#BUG: will create duplicates if there are multiple APPPROGS
+	$(eval LIBRARIES=$(LIBRARIES) $($(1)_LIBRARIES))
+	$(eval $(1)_DEPENDS=$($(1)_OBJECTS:.o=.d))
+
+	$(eval APP_DEPENDS=$($(1)_DEPENDS)) $(APP_DEPENDS)
+	$(eval APP_OBJECTS=$($(1)_OBJECTS)) $(APP_OBJECTS)
+
+-include $($(1)_DEPENDS)
+
 $(1): $($(1)_OBJECTS)
 	$(CXX) $(LIBS) $(LDFLAGS) $($(1)_OBJECTS) $($(1)_LDFLAGS) $(call LIST_LIBRARIES,$(1)) -o $(1)
+
 endef
 
 ###################################################################################
 # Create test targets
 ###################################################################################
 TEST_TARGETS=
+TEST_DEPENDS=
 define CREATE_TEST_TARGET
 
 	$(eval $(1)_DEPS=$(1:%.cpp=%.d))
@@ -33,12 +45,17 @@ define CREATE_TEST_TARGET
 	$(eval $(1)_TARG=$(shell basename $(1:%.cpp=%)))
 	$(eval $(1)_LIBS=$(foreach lib, $(LIBRARIES), $(CPPROOT)/library/lib/lib$(lib).a))
 
-#-include $($(1)_DEPS)
+	$(eval TEST_TARGETS=$($(1)_TARG) $(TEST_TARGETS))
+	$(eval TEST_DEPENDS=$($(1)_DEPS) $(TEST_DEPENDS))
+
+-include $($(1)_DEPS)
 
 $($(1)_TARG) : $($(1)_OBJ)
-	$(CXX) $($(1)_OBJ) $(LIBS) $($(1)_LIBS) $($(1)_LIBS) $(LDFLAGS) -lboost_unit_test_framework -o $($(1)_TARG)
+	$(CXX) $($(1)_OBJ) $(LIBS) $($(1)_LIBS) $(LDFLAGS) -lboost_unit_test_framework -o $($(1)_TARG)
 
-$(eval TEST_TARGETS=$($(1)_TARG) $(TEST_TARGETS))
+$($(1)_TARG)_clean :
+	rm -f $($(1)_TARG) $($(1)_OBJ) $($(1)_DEPS)
+
 endef
 
 ###################################################################################
@@ -50,8 +67,11 @@ define CREATE_LIBRARY
 $(eval $(1)_lib_SOURCES=$(wildcard $(CPPROOT)/library/$(1)/*.cpp))
 $(eval $(1)_lib_SOURCES=$(filter-out %_test.cpp, $($(1)_lib_SOURCES)))
 
+$(eval $(1)_lib_DEPENDS=$($(1)_lib_SOURCES:.cpp=.d))
 $(eval $(1)_lib_OBJECTS=$($(1)_lib_SOURCES:.cpp=.o))
 $(eval $(1)_lib_LIBRARY=$(CPPROOT)/library/lib/lib$(1).a)
+
+-include $($(1)_lib_DEPENDS)
 
 # create the actual library target (redirect will not cause library to be rebuilt every time)
 $($(1)_lib_LIBRARY): $($(1)_lib_OBJECTS)
@@ -62,8 +82,8 @@ $($(1)_lib_LIBRARY): $($(1)_lib_OBJECTS)
 # create the redirect target
 $(1)_lib: $($(1)_lib_LIBRARY)
 
-$(1)_lib_clean:
-	rm $($(1)_lib_OBJECTS) $($(1)_lib_LIBRARY)
+$(1)_clean:
+	rm -f $($(1)_lib_OBJECTS) $($(1)_lib_DEPENDS) $($(1)_lib_LIBRARY)
 endef
 
 ###################################################################################
@@ -80,13 +100,15 @@ $(foreach lib, $(LIBRARIES), $(eval $(call CREATE_LIBRARY,$(lib))))
 
 targets:
 	@echo "Known targets:"
-	@echo "apps  = $(APPPROGS)"
-	@echo "libs  = $(LIBRARIES)"
+	@echo "apps = $(APPPROGS)"
+	@echo "libs = $(LIBRARIES)"
 
 tests:
 	@echo "Known tests:"
-	@echo "files = $(TESTPROGS)"
-	@echo "tests = $(TEST_TARGETS)"
+	@echo $(TEST_TARGETS)
+
+tests_all   : $(TEST_TARGETS)
+tests_clean : $(foreach target, $(TEST_TARGETS), $(target)_clean)
 
 clean:
-	rm -f $(APPPROGS) $(TEST_TARGETS) *.o *.d
+	rm -f $(APPPROGS) $(APP_OBJECTS) $(APP_DEPENDS) $(TEST_DEPENDS) $(TEST_TARGETS) *.o *.d

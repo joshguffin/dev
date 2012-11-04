@@ -1,3 +1,5 @@
+#include "system/common.h"
+
 #include "util/commandline.h"
 
 namespace UtilLib {

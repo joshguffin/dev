@@ -1,4 +1,6 @@
-#include "stringtable.h"
+#include "system/common.h"
+
+#include "string/stringtable.h"
 
 #include <assert.h>
 #include <iomanip>

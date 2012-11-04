@@ -6,7 +6,7 @@
 #define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 #include "util/persistence.h"
-#include "include/headermacros.h"
+#include "system/headermacros.h"
 
 #include <cstdio>
 #include <string>

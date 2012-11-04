@@ -1,3 +1,5 @@
+#include "system/common.h"
+
 #include "system/log.h"
 
 namespace SystemLib {
