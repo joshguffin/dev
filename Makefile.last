@@ -2,13 +2,6 @@
 # do not print all commands
 #.SILENT: $(TESTPROGS) $(APPPROGS)
 
-# all files are compiled using these commands
-
-%.o : %.cpp
-	@echo $(MAKEPRINT)
-	@$(MAKEDEPEND)
-	@$(MAKESOURCE)
-
 ###################################################################################
 # Each application defines a variable called "application_LIBRARIES" consisting
 # of a space-separated list of libraries on which the application depends.  This
@@ -23,54 +16,77 @@ endef
 # the list of desired objects and required libraries to produce the make target
 ###################################################################################
 define CREATE_TARGET
-$(eval LIBRARIES="$(LIBRARIES) $($(1)_LIBRARIES)")
+$(eval LIBRARIES=$(LIBRARIES) $($(1)_LIBRARIES))
 -include $($(1)_OBJECTS:.o=.d)
 $(1): $($(1)_OBJECTS)
-	$(CXX) $(LIBS) $(LDFLAGS) $(foreach object, $($(1)_OBJECTS), $(object)) \
-		$($(1)_LDFLAGS) $(call LIST_LIBRARIES,$(1)) -o $(1)
+	$(CXX) $(LIBS) $(LDFLAGS) $($(1)_OBJECTS) $($(1)_LDFLAGS) $(call LIST_LIBRARIES,$(1)) -o $(1)
 endef
 
 ###################################################################################
-# Given a program name, specified by adding to TESTPROGS or APPPROGS, traverse
-# the list of desired objects and required libraries to produce the make target
+# Create test targets
 ###################################################################################
+TEST_TARGETS=
 define CREATE_TEST_TARGET
-	$(eval LIBS=$(LIBS) -lboost_unit_test_framework)
-	$(eval $(call CREATE_TARGET,$(1)))
+
+	$(eval $(1)_DEPS=$(1:%.cpp=%.d))
+	$(eval $(1)_OBJ =$(1:%.cpp=%.o))
+	$(eval $(1)_TARG=$(shell basename $(1:%.cpp=%)))
+	$(eval $(1)_LIBS=$(foreach lib, $(LIBRARIES), $(CPPROOT)/library/lib/lib$(lib).a))
+
+#-include $($(1)_DEPS)
+
+$($(1)_TARG) : $($(1)_OBJ)
+	$(CXX) $($(1)_OBJ) $(LIBS) $($(1)_LIBS) $($(1)_LIBS) $(LDFLAGS) -lboost_unit_test_framework -o $($(1)_TARG)
+
+$(eval TEST_TARGETS=$($(1)_TARG) $(TEST_TARGETS))
 endef
 
 ###################################################################################
 # define library targets; lib/libxxxx.a, and xxxx_lib, which produces it
 ###################################################################################
 define CREATE_LIBRARY
-# all .cpp files are contributors
+
+# all .cpp files are contributors except for those of the form xxx_test.cpp
 $(eval $(1)_lib_SOURCES=$(wildcard $(CPPROOT)/library/$(1)/*.cpp))
-# except for those of the form xxx_test.cpp
-$(eval $(1)_lib_OBJECTS=$(patsubst %.cpp,%.o,$(filter-out *_test.cpp,$($(1)_lib_SOURCES))))
+$(eval $(1)_lib_SOURCES=$(filter-out %_test.cpp, $($(1)_lib_SOURCES)))
+
+$(eval $(1)_lib_OBJECTS=$($(1)_lib_SOURCES:.cpp=.o))
 $(eval $(1)_lib_LIBRARY=$(CPPROOT)/library/lib/lib$(1).a)
-# create the actual library target
+
+# create the actual library target (redirect will not cause library to be rebuilt every time)
 $($(1)_lib_LIBRARY): $($(1)_lib_OBJECTS)
 	@mkdir -p $(CPPROOT)/library/lib/
 	@/bin/echo -e "ar rcs `echo $($(1)_lib_LIBRARY) $($(1)_lib_OBJECTS) | sed 's/ / \\\\\n/g'`"
 	@ar rcs $($(1)_lib_LIBRARY) $($(1)_lib_OBJECTS)
+
 # create the redirect target
 $(1)_lib: $($(1)_lib_LIBRARY)
 
+$(1)_lib_clean:
+	rm $($(1)_lib_OBJECTS) $($(1)_lib_LIBRARY)
 endef
 
+###################################################################################
 # The following create targets and add entries to LIBRARIES
+###################################################################################
 $(foreach app,  $(APPPROGS),  $(eval $(call CREATE_TARGET,$(app))))
 $(foreach test, $(TESTPROGS), $(eval $(call CREATE_TEST_TARGET,$(test))))
 
-# The following create targets for the entries in LIBRARIES
+###################################################################################
+# The following creates targets for the entries in LIBRARIES
+###################################################################################
 $(eval LIBRARIES=$(shell echo $(LIBRARIES) | tr ' ' '\n' | sort | uniq))
-$(foreach lib,  $(LIBRARIES), $(eval $(call CREATE_LIBRARY,$(lib))))
+$(foreach lib, $(LIBRARIES), $(eval $(call CREATE_LIBRARY,$(lib))))
 
 targets:
 	@echo "Known targets:"
-	@echo "tests = $(TESTPROGS)"
 	@echo "apps  = $(APPPROGS)"
 	@echo "libs  = $(LIBRARIES)"
 
+tests:
+	@echo "Known tests:"
+	@echo "files = $(TESTPROGS)"
+	@echo "tests = $(TEST_TARGETS)"
+
 clean:
-	rm -f $(APPPROGS) $(TESTPROGS) *.o *.d
+	rm -f $(APPPROGS) $(TEST_TARGETS) *.o *.d

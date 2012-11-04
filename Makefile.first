@@ -26,6 +26,12 @@ LIBS = -L/usr/lib -L/usr/local/lib -L$(LIBRARY)/lib -lm
 CCFLAGS = -g -Wall -Werror -Wextra -DIB_USE_STD_STRING -Wno-switch -Wno-unused-parameter
 LDFLAGS = -g
 
-LIBRARIES=""
+LIBRARIES=
+
+# all files are compiled using these commands
+%.o : %.cpp
+	@echo $(MAKEPRINT)
+	@$(MAKEDEPEND)
+	@$(MAKESOURCE)
 
 .SUFFIXES: .cpp

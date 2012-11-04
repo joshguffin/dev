@@ -1,5 +1,5 @@
 include $(CPPROOT)/Makefile.first
 
-LIBRARIES="string system util"
+include $(CPPROOT)/library/Makefile.libraries
 
 include $(CPPROOT)/Makefile.last
