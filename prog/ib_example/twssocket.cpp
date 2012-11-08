@@ -1,8 +1,9 @@
+#include "system/common.h"
 
 #include "twssocket.h"
 
-#include "ib/TwsSocketClientErrors.h"
-#include "ib/EWrapper.h"
+#include "twsapi/TwsSocketClientErrors.h"
+#include "twsapi/EWrapper.h"
 
 #include <arpa/inet.h>
 #include <errno.h>
@@ -11,9 +12,9 @@
 
 using std::cout;
 using std::endl;
+using namespace TwsApi;
 
 const int PING_DEADLINE = 2; // seconds
-
 
 ///////////////////////////////////////////////////////////
 // member funcs

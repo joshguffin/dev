@@ -23,8 +23,8 @@ define CREATE_TARGET
 	$(eval LIBRARIES=$(LIBRARIES) $($(1)_LIBRARIES))
 	$(eval $(1)_DEPENDS=$($(1)_OBJECTS:.o=.d))
 
-	$(eval APP_DEPENDS=$($(1)_DEPENDS)) $(APP_DEPENDS)
-	$(eval APP_OBJECTS=$($(1)_OBJECTS)) $(APP_OBJECTS)
+	$(eval APP_DEPENDS=$($(1)_DEPENDS) $(APP_DEPENDS))
+	$(eval APP_OBJECTS=$($(1)_OBJECTS) $(APP_OBJECTS))
 
 -include $($(1)_DEPENDS)
 

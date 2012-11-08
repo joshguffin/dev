@@ -1,15 +1,17 @@
 #ifndef twssocket_h_INCLUDED
 #define twssocket_h_INCLUDED
 
-#include "ib/EClientSocketBase.h"
+#include "twsapi/EClientSocketBase.h"
 
+namespace TwsApi {
 class EWrapper;
+}
 
-class TwsSocket : public EClientSocketBase
+class TwsSocket : public TwsApi::EClientSocketBase
 {
 public:
 
-	explicit TwsSocket(EWrapper& ptr);
+	TwsSocket(TwsApi::EWrapper& ptr);
 	~TwsSocket();
 
 	bool isSocketOK() const;
@@ -82,7 +84,7 @@ public:
 
 private:
 
-   EWrapper& wrapper_;
+   TwsApi::EWrapper& wrapper_;
 	time_t sleepDeadline_;
 	int fd_;
 };
