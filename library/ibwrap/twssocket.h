@@ -1,7 +1,7 @@
 #ifndef twssocket_h_INCLUDED
 #define twssocket_h_INCLUDED
 
-#include "twsapi/EClientSocketBase.h"
+#include "twsapi/common.h"
 
 namespace TwsApi {
 class EWrapper;

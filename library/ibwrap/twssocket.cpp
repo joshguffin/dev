@@ -2,8 +2,9 @@
 
 #include "twssocket.h"
 
-#include "twsapi/TwsSocketClientErrors.h"
-#include "twsapi/EWrapper.h"
+namespace TwsApi {
+#include "twsapi/IB_LIBRARY/Shared/EClientSocketBaseImpl.h"
+}
 
 #include <arpa/inet.h>
 #include <errno.h>

@@ -1,15 +1,13 @@
 #ifndef twsclient_h_INCLUDED
 #define twsclient_h_INCLUDED
 
-#include "logwrapper.h"
+#include "ibwrap/twsclientbase.h"
 
 #include <boost/scoped_ptr.hpp>
 #include <memory>
 #include <stdio.h>
 
-class TwsSocket;
-
-class TwsClient : public LogWrapper
+class TwsClient : public TwsClientBase
 {
 public:
 
@@ -17,11 +15,6 @@ public:
 	~TwsClient();
 
 	void processMessages();
-
-public:
-
-   bool connect(const std::string& host, unsigned port);
-	bool isConnected() const;
 
 private:
 
@@ -41,7 +34,6 @@ private:
 
 private:
 
-	boost::scoped_ptr<TwsSocket> client_;
 	OrderId oid_;
 };
 

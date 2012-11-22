@@ -1,13 +1,9 @@
 #include "system/common.h"
 
 // library headers
-#include "twsapi/IBString.h"
-#include "twsapi/Contract.h"
-#include "twsapi/Order.h"
-#include "twsapi/EClientSocketBaseImpl.h"
+#include "twsapi/common.h"
 
 // local headers
-#include "twssocket.h"
 #include "twsclient.h"
 
 #define PRINT(x) ' ' << #x << '=' << x
@@ -17,8 +13,7 @@ const int SLEEP_BETWEEN_PINGS = 30; // seconds
 ///////////////////////////////////////////////////////////
 // member funcs
 TwsClient::TwsClient()
-	: client_(new TwsSocket(*this))
-	, oid_(0)
+	: oid_(0)
 {
 }
 
@@ -26,32 +21,10 @@ TwsClient::~TwsClient()
 {
 }
 
-bool
-TwsClient::connect(const std::string& host, unsigned int port)
-{
-   if (client_->isConnected())
-      return true;
-
-   bool bRes = client_->connect(host, port);
-
-   if (bRes)
-      cout << "TwsClient::connect: connected to " << host << ':' << port << endl;
-   else
-      cout << "TwsClient::connect: failed to connect to " << host << ':' << port << endl;
-
-   return bRes;
-}
-
-bool
-TwsClient::isConnected() const
-{
-   return client_->isConnected();
-}
-
 void
 TwsClient::processMessages()
 {
-   client_->processMessages();
+   TwsClientBase::processMessages();
 
    static int i = 0;
    if (i == 2) {
@@ -61,7 +34,7 @@ TwsClient::processMessages()
       contract.secType  = "STK";
       contract.exchange = "SMART";
       contract.currency = "USD";
-      client_->reqMktData(1, contract, "221,165,236,258", false);
+      socket().reqMktData(1, contract, "221,165,236,258", false);
    }
 
    i++;
@@ -92,7 +65,7 @@ TwsClient::placeOrder()
       << endl;
 
    //client_->placeOrder(oid_, contract, order);
-   client_->reqMktData(1, contract, "221,165,236,258", false);
+   socket().reqMktData(1, contract, "221,165,236,258", false);
 }
 
 void
@@ -100,7 +73,7 @@ TwsClient::cancelOrder()
 {
    cout << "Cancelling Order " << oid_ << endl;
 
-   client_->cancelOrder(oid_);
+   socket().cancelOrder(oid_);
 }
 
 void
@@ -114,7 +87,7 @@ TwsClient::error(const int id, const int errorCode, const std::string errorStrin
       << endl;
 
    if (id == -1 && errorCode == 1100) // if "Connectivity between IB and TWS has been lost"
-      client_->disconnect();
+      socket().disconnect();
 }
 
 void

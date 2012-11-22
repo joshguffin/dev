@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>
+#include <assert.h>
 
 using std::cout;
 using std::endl;

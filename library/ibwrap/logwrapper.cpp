@@ -1,8 +1,77 @@
 #include "system/common.h"
 
-#include "logwrapper.h"
+#include "ibwrap/logwrapper.h"
 
 #define PRINT(x) ' ' << #x << '=' << x
+
+void
+LogWrapper::nextValidId(OrderId orderId)
+{
+   cout
+      << "LogWrapper::nextValidId: "
+      << PRINT(orderId)
+      << endl;
+}
+
+
+void
+LogWrapper::tickPrice(TickerId tickerId,
+                     TickType type,
+                     double price,
+                     int canAutoExecute)
+{
+   cout
+      << "LogWrapper::tickPrice: "
+      << PRINT(tickerId)
+      << PRINT(type)
+      << PRINT(price)
+      << PRINT(canAutoExecute)
+      << endl;
+}
+
+void
+LogWrapper::tickSize(TickerId tickerId, TickType type, int size)
+{
+   cout
+      << "LogWrapper::tickSize: "
+      << PRINT(tickerId)
+      << PRINT(type)
+      << PRINT(size)
+      << endl;
+}
+
+void
+LogWrapper::tickGeneric(TickerId tickerId, TickType type, double value)
+{
+   cout
+      << "LogWrapper::tickGeneric: "
+      << PRINT(tickerId)
+      << PRINT(type)
+      << PRINT(value)
+      << endl;
+}
+
+void
+LogWrapper::tickString(TickerId tickerId, TickType type, const std::string& value)
+{
+   cout
+      << "LogWrapper::tickString: "
+      << PRINT(tickerId)
+      << PRINT(type)
+      << PRINT(value)
+      << endl;
+}
+
+void
+LogWrapper::error(const int id, const int errorCode, const std::string errorString)
+{
+   cout
+      << "LogWrapper::error: "
+      << PRINT(id)
+      << PRINT(errorCode)
+      << PRINT(errorString)
+      << endl;
+}
 
 void
 LogWrapper::tickEFP(TickerId tickerId,
