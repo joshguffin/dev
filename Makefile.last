@@ -22,14 +22,15 @@ define CREATE_TARGET
 #BUG: will create duplicates if there are multiple APPPROGS
 	$(eval LIBRARIES=$(LIBRARIES) $($(1)_LIBRARIES))
 	$(eval $(1)_DEPENDS=$($(1)_OBJECTS:.o=.d))
+	$(eval $(1)_EXPANDED_OBJECTS=$(foreach obj, $($(1)_OBJECTS), $(CURDIR)/$(obj)))
 
 	$(eval APP_DEPENDS=$($(1)_DEPENDS) $(APP_DEPENDS))
-	$(eval APP_OBJECTS=$($(1)_OBJECTS) $(APP_OBJECTS))
+	$(eval APP_OBJECTS=$($(1)_EXPANDED_OBJECTS) $(APP_OBJECTS))
 
 -include $($(1)_DEPENDS)
 
-$(1): $($(1)_OBJECTS)
-	$(CXX) $(LIBS) $(LDFLAGS) $($(1)_OBJECTS) $($(1)_LDFLAGS) $(call LIST_LIBRARIES,$(1)) -o $(1)
+$(1): $($(1)_EXPANDED_OBJECTS)
+	$(CXX) $(LIBS) $(LDFLAGS) $($(1)_EXPANDED_OBJECTS) $($(1)_LDFLAGS) $(call LIST_LIBRARIES,$(1)) -o $(1)
 
 endef
 
