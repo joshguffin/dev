@@ -5,51 +5,22 @@
 
 namespace StringLib {
 
-class ColorWrapper
-{
+#define CREATE_COLOR(name, sequence) \
+   std::ostream& name(std::ostream& os) { os << std::string("\033[") << std::string(#sequence); return os; }
 
-public:
+CREATE_COLOR(resetColor , 0m);
+CREATE_COLOR(bold       , 1m);
+CREATE_COLOR(black      , 30m);
+CREATE_COLOR(red        , 31m);
+CREATE_COLOR(green      , 32m);
+CREATE_COLOR(yellow     , 33m);
+CREATE_COLOR(blue       , 34m);
+CREATE_COLOR(magenta    , 35m);
+CREATE_COLOR(cyan       , 36m);
+CREATE_COLOR(white      , 37m);
+CREATE_COLOR(empty      , 1m);
 
-   enum Decorator {
-      Black   = 30,
-      Red     = 31,
-      Green   = 32,
-      Yellow  = 33,
-      Blue    = 34,
-      Magenta = 35,
-      Cyan    = 36,
-      White   = 37,
-   };
-
-public:
-
-   ColorWrapper();
-
-   IMPLEMENT_ACCESSOR(const std::string& , string);
-   void clearDecorations() { decorators_ = ""; };
-
-private:
-
-   static const std::string EscapeStartPre;
-   static const std::string EscapeStartPost;
-   static const std::string EscapeDisableColors;
-
-   std::string decorators_;
-   std::string string_;
-
-   bool escaped_;
-
-   friend ColorWrapper& operator<<(ColorWrapper&, const std::string&);
-   friend ColorWrapper& operator<<(ColorWrapper&, ColorWrapper::Decorator&);
-   friend std::ostream& operator<<(std::ostream&, const ColorWrapper&);
-};
-
-inline ColorWrapper&
-operator<<(ColorWrapper& cw, const std::string& str)
-{
-   cw.string_ += str;
-   return cw;
-}
+#undef CREATE_COLOR
 
 } // end of namespace StringLib
 
