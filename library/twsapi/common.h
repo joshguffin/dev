@@ -1,18 +1,17 @@
 #ifndef twsapi_common_h_INCLUDED
 #define twsapi_common_h_INCLUDED
 
+#define IB_USE_STD_STRING
 
 #include "system/common.h"
-#include <cstdlib>
-#include <vector>
-#include <string>
-#include <memory>
-
 #include <algorithm>
+#include <cstdlib>
+#include <cstdio>
 #include <iomanip>
-#include <vector>
 #include <iostream>
 #include <memory>
+#include <string>
+#include <vector>
 
 namespace TwsApi {
 #include "twsapi/IB_LIBRARY/Shared/CommonDefs.h"
@@ -30,6 +29,7 @@ namespace TwsApi {
 #include "twsapi/IB_LIBRARY/Shared/shared_ptr.h"
 }
 
+#include "stream.h"
 
 #endif // twsapi_common_h_INCLUDED
 
