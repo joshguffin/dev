@@ -1,7 +1,7 @@
 #ifndef hmdclient_h_INCLUDED
 #define hmdclient_h_INCLUDED
 
-#include "ibwrap/twsclientbase.h"
+#include "system/twsclientbase.h"
 
 #include "datapoint.h"
 

@@ -1,7 +1,7 @@
 #ifndef twsclient_h_INCLUDED
 #define twsclient_h_INCLUDED
 
-#include "ibwrap/twsclientbase.h"
+#include "system/twsclientbase.h"
 
 #include <boost/scoped_ptr.hpp>
 #include <memory>

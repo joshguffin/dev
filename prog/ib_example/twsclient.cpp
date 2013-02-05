@@ -37,6 +37,9 @@ TwsClient::processMessages()
       socket().reqMktData(1, contract, "221,165,236,258", false);
    }
 
+   if (i == 3)
+      placeOrder();
+
    i++;
 }
 
@@ -64,8 +67,8 @@ TwsClient::placeOrder()
       << '@' << order.lmtPrice
       << endl;
 
-   //client_->placeOrder(oid_, contract, order);
-   socket().reqMktData(1, contract, "221,165,236,258", false);
+   socket().placeOrder(oid_, contract, order);
+   //socket().reqMktData(1, contract, "221,165,236,258", false);
 }
 
 void

@@ -1,12 +1,14 @@
 #include "system/common.h"
-
-#include "ibwrap/logwrapper.h"
+#include "system/logwrapper.h"
 
 #define PRINT(x) ' ' << #x << '=' << x
 
 void
 LogWrapper::nextValidId(OrderId orderId)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::nextValidId: "
       << PRINT(orderId)
@@ -20,6 +22,9 @@ LogWrapper::tickPrice(TickerId tickerId,
                      double price,
                      int canAutoExecute)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::tickPrice: "
       << PRINT(tickerId)
@@ -32,6 +37,9 @@ LogWrapper::tickPrice(TickerId tickerId,
 void
 LogWrapper::tickSize(TickerId tickerId, TickType type, int size)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::tickSize: "
       << PRINT(tickerId)
@@ -43,6 +51,9 @@ LogWrapper::tickSize(TickerId tickerId, TickType type, int size)
 void
 LogWrapper::tickGeneric(TickerId tickerId, TickType type, double value)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::tickGeneric: "
       << PRINT(tickerId)
@@ -54,6 +65,9 @@ LogWrapper::tickGeneric(TickerId tickerId, TickType type, double value)
 void
 LogWrapper::tickString(TickerId tickerId, TickType type, const std::string& value)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::tickString: "
       << PRINT(tickerId)
@@ -65,6 +79,9 @@ LogWrapper::tickString(TickerId tickerId, TickType type, const std::string& valu
 void
 LogWrapper::error(const int id, const int errorCode, const std::string errorString)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::error: "
       << PRINT(id)
@@ -84,6 +101,9 @@ LogWrapper::tickEFP(TickerId tickerId,
                     double dividendImpact,
                     double dividendsToExpiry)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::tickEFP: "
       << PRINT(tickerId)
@@ -104,6 +124,9 @@ LogWrapper::openOrder(OrderId orderId,
                       const Order& o,
                       const OrderState& ostate)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::openOrder: "
       << PRINT(orderId)
@@ -117,6 +140,9 @@ LogWrapper::openOrderEnd()
 void
 LogWrapper::winError(const std::string& str, int lastError)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::winError: "
       << PRINT(str)
@@ -134,6 +160,9 @@ LogWrapper::updateAccountValue(const std::string& key,
                                const std::string& currency,
                                const std::string& accountName)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::updateAccountValue: "
       << PRINT(key)
@@ -153,6 +182,9 @@ LogWrapper::updatePortfolio(const Contract& contract,
                             double realizedPNL,
                             const std::string& accountName)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::updatePortfolio: "
       << PRINT(position)
@@ -168,6 +200,9 @@ LogWrapper::updatePortfolio(const Contract& contract,
 void
 LogWrapper::updateAccountTime(const std::string& timeStamp)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::updateAccountTime: "
       << PRINT(timeStamp)
@@ -177,6 +212,9 @@ LogWrapper::updateAccountTime(const std::string& timeStamp)
 void
 LogWrapper::accountDownloadEnd(const std::string& accountName)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::accountDownloadEnd: "
       << PRINT(accountName)
@@ -186,6 +224,9 @@ LogWrapper::accountDownloadEnd(const std::string& accountName)
 void
 LogWrapper::contractDetails(int reqId, const ContractDetails& contractDetails)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::contractDetails: "
       << PRINT(reqId)
@@ -195,6 +236,9 @@ LogWrapper::contractDetails(int reqId, const ContractDetails& contractDetails)
 void
 LogWrapper::bondContractDetails(int reqId, const ContractDetails& contractDetails)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::bondContractDetails: "
       << PRINT(reqId)
@@ -204,6 +248,9 @@ LogWrapper::bondContractDetails(int reqId, const ContractDetails& contractDetail
 void
 LogWrapper::contractDetailsEnd(int reqId)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::contractDetailsEnd: "
       << PRINT(reqId)
@@ -213,6 +260,9 @@ LogWrapper::contractDetailsEnd(int reqId)
 void
 LogWrapper::execDetails(int reqId, const Contract& contract, const Execution& execution)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::execDetails: "
       << PRINT(reqId)
@@ -222,6 +272,9 @@ LogWrapper::execDetails(int reqId, const Contract& contract, const Execution& ex
 void
 LogWrapper::execDetailsEnd(int reqId)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::execDetailsEnd: "
       << PRINT(reqId)
@@ -237,6 +290,9 @@ LogWrapper::updateMktDepth(TickerId id,
                            double price,
                            int size)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::updateMktDepth: "
       << PRINT(id)
@@ -257,6 +313,9 @@ LogWrapper::updateMktDepthL2(TickerId id,
                              double price,
                              int size)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::updateMktDepthL2: "
       << PRINT(id)
@@ -275,6 +334,9 @@ LogWrapper::updateNewsBulletin(int msgId,
                                const std::string& newsMessage,
                                const std::string& originExch)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::updateNewsBulletin: "
       << PRINT(msgId)
@@ -287,6 +349,9 @@ LogWrapper::updateNewsBulletin(int msgId,
 void
 LogWrapper::managedAccounts(const std::string& accountsList)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::managedAccounts: "
       << PRINT(accountsList)
@@ -296,6 +361,9 @@ LogWrapper::managedAccounts(const std::string& accountsList)
 void
 LogWrapper::receiveFA(faDataType pFaDataType, const std::string& cxml)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::receiveFA: "
       << PRINT(pFaDataType)
@@ -315,6 +383,9 @@ LogWrapper::historicalData(TickerId reqId,
                            double WAP,
                            int hasGaps)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::historicalData: "
       << PRINT(reqId)
@@ -333,6 +404,9 @@ LogWrapper::historicalData(TickerId reqId,
 void
 LogWrapper::scannerParameters(const std::string& xml)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::scannerParameters: "
       << PRINT(xml)
@@ -348,6 +422,9 @@ LogWrapper::scannerData(int reqId,
                         const std::string& projection,
                         const std::string& legsStr)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::scannerData: "
       << PRINT(reqId)
@@ -362,6 +439,9 @@ LogWrapper::scannerData(int reqId,
 void
 LogWrapper::scannerDataEnd(int reqId)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::scannerDataEnd: "
       << PRINT(reqId)
@@ -379,6 +459,9 @@ LogWrapper::realtimeBar(TickerId reqId,
                         double wap,
                         int count)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::realtimeBar: "
       << PRINT(reqId)
@@ -396,6 +479,9 @@ LogWrapper::realtimeBar(TickerId reqId,
 void
 LogWrapper::fundamentalData(TickerId reqId, const std::string& data)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::fundamentalData: "
       << PRINT(reqId)
@@ -406,6 +492,9 @@ LogWrapper::fundamentalData(TickerId reqId, const std::string& data)
 void
 LogWrapper::deltaNeutralValidation(int reqId, const UnderComp& underComp)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::deltaNeutralValidation: "
       << PRINT(reqId)
@@ -415,6 +504,9 @@ LogWrapper::deltaNeutralValidation(int reqId, const UnderComp& underComp)
 void
 LogWrapper::tickSnapshotEnd(int reqId)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::tickSnapshotEnd: "
       << PRINT(reqId)
@@ -424,6 +516,9 @@ LogWrapper::tickSnapshotEnd(int reqId)
 void
 LogWrapper::marketDataType(TickerId reqId, int marketDataType)
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::marketDataType: "
       << PRINT(reqId)
@@ -444,6 +539,9 @@ LogWrapper::orderStatus(OrderId orderId,
                         const std::string& whyHeld)
 
 {
+   if (!print_)
+      return;
+
    cout
       << "LogWrapper::orderStatus: "
       << PRINT(orderId)
@@ -479,6 +577,9 @@ LogWrapper::tickOptionComputation(TickerId tickerId,
                                   double theta,
                                   double undPrice)
 {
+   if (!print_)
+      return;
+
    cout
       << "TwsClient::tickOptionComputation: "
       << PRINT(tickerId)
@@ -493,5 +594,3 @@ LogWrapper::tickOptionComputation(TickerId tickerId,
       << PRINT(undPrice)
       << endl;
 }
-
-

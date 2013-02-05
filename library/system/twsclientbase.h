@@ -1,8 +1,8 @@
-#ifndef ibwrap_twsclientbase_h_INCLUDED
-#define ibwrap_twsclientbase_h_INCLUDED
+#ifndef system_twsclientbase_h_INCLUDED
+#define system_twsclientbase_h_INCLUDED
 
-#include "ibwrap/logwrapper.h"
-#include "ibwrap/twssocket.h"
+#include "system/logwrapper.h"
+#include "system/twssocket.h"
 
 #include <boost/scoped_ptr.hpp>
 #include <memory>
@@ -12,7 +12,7 @@ class TwsClientBase : public LogWrapper
 {
 public:
 
-	TwsClientBase();
+	TwsClientBase(bool print = true);
 	~TwsClientBase();
 
 	void processMessages();
@@ -32,4 +32,4 @@ private:
 	boost::scoped_ptr<TwsSocket> client_;
 };
 
-#endif // ibwrap_twsclientbase_h_INCLUDED
+#endif // system_twsclientbase_h_INCLUDED

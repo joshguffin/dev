@@ -13,7 +13,8 @@ TickerId HmdClient::NextClientId_ = 0;
 ///////////////////////////////////////////////////////////
 // member funcs
 HmdClient::HmdClient()
-	: requested_(false)
+   : TwsClientBase(false)
+	, requested_(false)
    , completed_(false)
 	, id_(++NextClientId_)
 {
@@ -41,8 +42,6 @@ HmdClient::request(const std::string& symbol, const std::string& barSize)
    bool        rthOnly  = false;
    int outputDateFormat = 2;
 
-   cout << "Requesting " << contract << endl;
-
    socket().reqHistoricalData(id_,
                               contract,
                               endDate,
@@ -56,7 +55,7 @@ HmdClient::request(const std::string& symbol, const std::string& barSize)
 void
 HmdClient::error(const int id, const int errorCode, const std::string errorString)
 {
-   cout
+   cerr
       << "HmdClient::error:"
       << PRINT(id)
       << PRINT(errorCode)

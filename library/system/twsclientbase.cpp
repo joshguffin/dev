@@ -2,7 +2,7 @@
 
 // library headers
 #include "twsapi/common.h"
-#include "ibwrap/twsclientbase.h"
+#include "system/twsclientbase.h"
 
 #define PRINT(x) ' ' << #x << '=' << x
 
@@ -10,8 +10,9 @@ const int SLEEP_BETWEEN_PINGS = 30; // seconds
 
 ///////////////////////////////////////////////////////////
 // member funcs
-TwsClientBase::TwsClientBase()
-	: client_(new TwsSocket(*this))
+TwsClientBase::TwsClientBase(bool print)
+	: LogWrapper(print)
+	, client_(new TwsSocket(*this))
 {
 }
 
@@ -33,10 +34,12 @@ TwsClientBase::connect(const std::string& host, unsigned int port)
 
    bool bRes = client_->connect(host, port);
 
-   if (bRes)
-      cout << "TwsClientBase::connect: connected to " << host << ':' << port << endl;
-   else
-      cout << "TwsClientBase::connect: failed to connect to " << host << ':' << port << endl;
+   if (LogWrapper::print()) {
+      if (bRes)
+         cout << "TwsClientBase::connect: connected to " << host << ':' << port << endl;
+      else
+         cout << "TwsClientBase::connect: failed to connect to " << host << ':' << port << endl;
+   }
 
    return bRes;
 }

@@ -1,5 +1,5 @@
-#ifndef ibwrap_logwrapper_h_INCLUDED
-#define ibwrap_logwrapper_h_INCLUDED
+#ifndef system_logwrapper_h_INCLUDED
+#define system_logwrapper_h_INCLUDED
 
 #include "twsapi/common.h"
 
@@ -7,7 +7,13 @@ using namespace TwsApi;
 
 class LogWrapper : public EWrapper
 {
+
+public:
+
+   LogWrapper(bool print = true) : print_(print) {}
+
 protected:
+
 	virtual void accountDownloadEnd(const std::string& accountName);
 	virtual void bondContractDetails(int reqId, const ContractDetails& contractDetails);
 	virtual void connectionClosed();
@@ -45,6 +51,12 @@ protected:
 	virtual void updateNewsBulletin(int msgId, int msgType, const std::string& newsMessage, const std::string& originExch);
 	virtual void updatePortfolio(const Contract& contract, int position, double marketPrice, double marketValue, double averageCost, double unrealizedPNL, double realizedPNL, const std::string& accountName);
 	virtual void winError(const std::string &str, int lastError);
+
+   IMPLEMENT_ACCESSOR(bool, print);
+
+private:
+
+   bool print_;
 };
 
-#endif // ibwrap_logwrapper_h_INCLUDED
+#endif // system_logwrapper_h_INCLUDED
