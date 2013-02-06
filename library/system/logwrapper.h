@@ -52,7 +52,7 @@ protected:
 	virtual void updatePortfolio(const Contract& contract, int position, double marketPrice, double marketValue, double averageCost, double unrealizedPNL, double realizedPNL, const std::string& accountName);
 	virtual void winError(const std::string &str, int lastError);
 
-   IMPLEMENT_ACCESSOR(bool, print);
+   IMPLEMENT_ACCESSORS(bool, print);
 
 private:
 
