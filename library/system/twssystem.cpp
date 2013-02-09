@@ -93,6 +93,12 @@ TwsSystem::requestMarketData(const Request& request) const
 }
 
 void
+TwsSystem::cancelMarketData(const Request& request) const
+{
+   client_->cancelMktData(request.tid());
+}
+
+void
 TwsSystem::tickPrice(TickerId id, TickType type, double value, int autoex)
 {
    Request::Tick(id, type, value);
@@ -113,6 +119,7 @@ TwsSystem::tickGeneric(TickerId id, TickType type, double value)
 void
 TwsSystem::tickString(TickerId id, TickType type, const std::string& value)
 {
+   cout << "String: " << id << ' ' << type << ' ' << value << endl;
    Request::Tick(id, type, value);
 }
 

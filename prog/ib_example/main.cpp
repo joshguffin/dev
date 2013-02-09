@@ -13,6 +13,7 @@ class Item : public Request::Consumer
 
 public:
    Item(const RequestKey& key) : Request::Consumer(key) {}
+   virtual ~Item() {}
 
 #define DEFINE_HANDLE(Type) virtual void handle(const DataLib::Type& data) { cout << #Type << ' ' << data << endl; }
    DEFINE_HANDLE(BidAsk);
@@ -27,19 +28,6 @@ public:
    DEFINE_HANDLE(Fundamentals);
 #undef DEFINE_HANDLE
 };
-
-void
-request()
-{
-   static bool requested = false;
-   if (requested)
-      return;
-
-   requested = true;
-   RequestKey key("AAPL");
-
-   new Item(key);
-}
 
 void
 placeOrder()
@@ -91,6 +79,8 @@ main(int argc, char** argv)
 
    cout << "Start of POSIX Socket Client Test" << endl;
 
+   Item* item = NULL;
+   int i = 0;
 	for (;;) {
 		++attempt;
 		cout << "Attempt " << attempt << " of " << MAX_ATTEMPTS << endl;
@@ -99,7 +89,16 @@ main(int argc, char** argv)
 
 		while (system.isConnected()) {
 			system.processMessages();
-         request();
+
+         if (!item && i < 3) {
+            RequestKey key("AAPL");
+            item = new Item(key);
+         }
+
+         if (++i == 3) {
+            delete item;
+            item = NULL;
+         }
          //placeOrder();
       }
 

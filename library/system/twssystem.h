@@ -26,6 +26,7 @@ public:
    TwsSocket& socket();
 
    int requestMarketData(const Request&) const;
+   void cancelMarketData(const Request&) const;
 
 public:
 

@@ -43,6 +43,7 @@ public:
 public:
 
    const TwsApi::Contract& contract() const;
+   IMPLEMENT_ACCESSOR(TickerId, tid);
 
    template <typename T>
    static void Tick(TickerId, TickType, const T&);
@@ -95,6 +96,7 @@ class Request::Consumer
 public:
 
    Consumer(const RequestKey& key) : key_(key) { Request::Add(*this); }
+   virtual ~Consumer() {}
 
 #define DEFINE_HANDLE(Type) virtual void handle(const DataLib::Type&) {}
    DEFINE_HANDLE(BidAsk);

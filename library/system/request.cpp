@@ -33,8 +33,23 @@ void
 Request::Remove(Consumer& consumer)
 {
    KeyStore& store = Keys();
-   RequestPtr& pt = store[consumer.key()];
+
+   const RequestKey& key  = consumer.key();
+   KeyStore::iterator loc = store.find(key);
+   RequestPtr& pt         = loc->second;
+
    pt->consumers_.erase(&consumer);
+
+   if (pt->consumers_.empty()) {
+
+      TickerStore& tickers       = Tickers();
+      TickerStore::iterator tloc = tickers.find(pt->tid_);
+      if (tloc != tickers.end())
+         tickers.erase(tloc);
+
+      TwsSystem::Instance().cancelMarketData(*pt);
+      store.erase(loc);
+   }
 }
 
 Request::Request(const RequestKey& key)
