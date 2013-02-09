@@ -30,7 +30,11 @@ define CREATE_TARGET
 
 -include $($(1)_DEPENDS)
 
-$(1): $($(1)_EXPANDED_OBJECTS) $(APP_LIBDEPS)
+# print what we're doing
+$(1)_description:
+	@/bin/echo "Building binary '$(1)'"
+
+$(1): $(1)_description $($(1)_EXPANDED_OBJECTS) $(APP_LIBDEPS)
 	$(CXX) $(LIBS) $(LDFLAGS) $($(1)_EXPANDED_OBJECTS) $($(1)_LDFLAGS) $(call LIST_LIBRARIES,$(1)) -o $(1)
 endef
 
@@ -51,7 +55,11 @@ define CREATE_TEST_TARGET
 
 -include $($(1)_DEPS)
 
-$($(1)_TARG) : $($(1)_OBJ)
+# print what we're doing
+$(1)_description:
+	@/bin/echo "Building test binary '$(1)'"
+
+$($(1)_TARG) : $(1)_description $($(1)_OBJ)
 	$(CXX) $($(1)_OBJ) $(LIBS) $($(1)_LIBS) $(LDFLAGS) -lboost_unit_test_framework -o $($(1)_TARG)
 
 $($(1)_TARG)_clean :
@@ -80,10 +88,14 @@ $($(1)_lib_LIBRARY): $($(1)_lib_OBJECTS)
 	@/bin/echo -e "ar rcs `echo $($(1)_lib_LIBRARY) $($(1)_lib_OBJECTS) | sed 's/ / \\\\\n/g'`"
 	@ar rcs $($(1)_lib_LIBRARY) $($(1)_lib_OBJECTS)
 
-# create the redirect target
-$(1)_lib: $($(1)_lib_LIBRARY)
+# print what we're doing
+$(1)_lib_description:
+	@/bin/echo "Building library '$(1)'"
 
-$(1)_clean:
+# create the redirect target
+$(1)_lib: $(1)_lib_description $($(1)_lib_LIBRARY)
+
+$(1)_lib_clean:
 	rm -f $($(1)_lib_OBJECTS) $($(1)_lib_DEPENDS) $($(1)_lib_LIBRARY)
 endef
 
