@@ -1,6 +1,8 @@
 #ifndef data_stats_h_INCLUDED
 #define data_stats_h_INCLUDED
 
+#include <iostream>
+
 namespace DataLib {
 
 class Stats
@@ -23,8 +25,6 @@ public:
 
    bool valid() const;
 
-   static std::string Request() { return ""; }
-
 private:
 
    double high_;
@@ -38,6 +38,19 @@ private:
 
    int volume_;
 };
+
+inline std::ostream&
+operator<<(std::ostream& os, const Stats& data)
+{
+   os << data.high()
+      << ' ' << data.low()
+      << ' ' << data.tradeRate()
+      << ' ' << data.tradeCount()
+      << ' ' << data.realTimeVolume()
+      << ' ' << data.volumeRate()
+      << ' ' << data.volume();
+   return os;
+}
 
 } // end of namespace DataLib
 

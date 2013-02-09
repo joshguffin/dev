@@ -1,6 +1,8 @@
 #ifndef data_last_h_INCLUDED
 #define data_last_h_INCLUDED
 
+#include <iostream>
+
 namespace DataLib {
 
 class Last
@@ -18,14 +20,18 @@ public:
    bool valid() const;
    void setTime(const std::string&);
 
-   static std::string Request() { return ""; }
-
 private:
 
    double price_;
    int    size_;
    time_t time_;
 };
+
+inline std::ostream&
+operator<<(std::ostream& os, const Last& data)
+{
+   return os << data.price() << ' ' << data.size() << ' ' << data.time();
+}
 
 } // end of namespace DataLib
 

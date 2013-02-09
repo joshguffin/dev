@@ -1,6 +1,8 @@
 #ifndef data_state_h_INCLUDED
 #define data_state_h_INCLUDED
 
+#include <iostream>
+
 namespace DataLib {
 
 class State
@@ -25,13 +27,17 @@ public:
    bool valid() const;
    void update(double);
 
-   static std::string Request() { return "236"; }
-
 private:
 
    bool halted_;
    Shortable::Type state_;
 };
+
+inline std::ostream&
+operator<<(std::ostream& os, const State& data)
+{
+   return os << data.state() << ' ' << data.halted();
+}
 
 } // end of namespace DataLib
 

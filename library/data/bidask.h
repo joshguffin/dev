@@ -1,6 +1,8 @@
 #ifndef data_bidask_h_INCLUDED
 #define data_bidask_h_INCLUDED
 
+#include <iostream>
+
 namespace DataLib {
 
 class BidAsk
@@ -18,8 +20,6 @@ public:
 
    bool valid() const;
 
-   static std::string Request() { return ""; }
-
 private:
 
    double bid_;
@@ -27,6 +27,16 @@ private:
    int    bidSize_;
    int    askSize_;
 };
+
+inline std::ostream&
+operator<<(std::ostream& os, const BidAsk& data)
+{
+   os << data.bid()
+      << ' ' << data.ask()
+      << ' ' << data.bidSize()
+      << ' ' << data.askSize();
+   return os;
+}
 
 } // end of namespace DataLib
 
