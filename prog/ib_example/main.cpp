@@ -1,4 +1,5 @@
 #include "system/common.h"
+#include "system/request.h"
 
 #include <iostream>
 using std::cout;
@@ -16,12 +17,19 @@ request()
 
    requested = true;
 
+   /*
    Contract contract;
    contract.symbol   = "AAPL";
    contract.secType  = "STK";
    contract.exchange = "SMART";
    contract.currency = "USD";
+
    TwsSystem::Instance().socket().reqMktData(1, contract, "221,165,236,258", false);
+   */
+
+   RequestKey key("AAPL");
+   Request req(key);
+   Request req2(key);
 }
 
 void

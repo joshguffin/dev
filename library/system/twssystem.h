@@ -17,11 +17,13 @@ public:
    void logging(bool);
 	void processMessages();
 
-   IMPLEMENT_ACCESSORS(const std::string& , host);
    IMPLEMENT_ACCESSORS(unsigned int       , port);
+   IMPLEMENT_ACCESSORS(const std::string& , host);
    IMPLEMENT_ACCESSORS(const OrderId&     , oid);
 
    TwsSocket& socket();
+
+   int requestMarketData(const TwsApi::Contract&) const;
 
 public:
 
@@ -35,6 +37,10 @@ private:
 
 	virtual void error(const int id, const int errorCode, const std::string&);
    virtual void nextValidId(OrderId);
+	virtual void tickGeneric(TickerId tickerId, TickType tickType, double value);
+	virtual void tickPrice(TickerId tickerId, TickType field, double price, int canAutoExecute);
+	virtual void tickSize(TickerId tickerId, TickType field, int size);
+	virtual void tickString(TickerId tickerId, TickType tickType, const std::string& value);
 
 private:
 

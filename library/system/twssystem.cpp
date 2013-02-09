@@ -2,6 +2,7 @@
 
 // library headers
 #include "twsapi/common.h"
+#include "system/request.h"
 
 TwsSystem&
 TwsSystem::Instance()
@@ -14,8 +15,8 @@ TwsSystem::TwsSystem()
 	: LogWrapper(false)
    , host_("127.0.0.1")
    , port_(4001)
+   , oid_(1)
 	, client_(new TwsSocket(*this))
-   , oid_(1);
 {
 }
 
@@ -82,4 +83,35 @@ TwsSystem::nextValidId(OrderId orderId)
    LogWrapper::nextValidId(orderId);
 }
 
+int
+TwsSystem::requestMarketData(const TwsApi::Contract& contract) const
+{
+   static int id = 0;
+   client_->reqMktData(++id, contract, "", false);
+   return id;
+}
+
+void
+TwsSystem::tickPrice(TickerId id, TickType type, double value, int autoex)
+{
+   Request::Tick(id, type, value);
+}
+
+void
+TwsSystem::tickSize(TickerId id, TickType type, int value)
+{
+   Request::Tick(id, type, value);
+}
+
+void
+TwsSystem::tickGeneric(TickerId id, TickType type, double value)
+{
+   Request::Tick(id, type, value);
+}
+
+void
+TwsSystem::tickString(TickerId id, TickType type, const std::string& value)
+{
+   Request::Tick(id, type, value);
+}
 
