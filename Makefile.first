@@ -8,16 +8,15 @@ LIBRARY = $(CPPROOT)/library
 CCC = clang
 CXX = clang++
 
-SUFFIXES += .d
+#SUFFIXES += .d
 
 # Don't clean up when making these targets
 NODEPS:=clean tags
 
 MAKEPRINT  = "	[CXX] $*.cpp"
-#MAKEPRINT  = $(MAKESOURCE)
 MAKESTEM   = $(CXX) $(INCLUDES) $(USERCPPFLAGS) $(CCFLAGS) -c $*.cpp -o
 MAKESOURCE = $(MAKESTEM) $@
-MAKEDEPEND = $(MAKESTEM) $*.d -MM -MQ $*.o
+MAKEDEPEND = $(MAKESTEM) $*.d -MM -MQ $*.o -MT $(LIBRARY)
 LINKSTEM   = $(CXX) $(LIBS) $(LDFLAGS)
 
 INCLUDES = -I. -I$(LIBRARY) -I$(LIBRARY)/include -I/usr/local/include

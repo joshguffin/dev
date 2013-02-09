@@ -67,7 +67,7 @@ TwsSystem::processMessages()
 }
 
 void
-TwsSystem::error(const int id, const int errorCode, const std::string errorString)
+TwsSystem::error(const int id, const int errorCode, const std::string& errorString)
 {
    LogWrapper::error(id, errorCode, errorString);
 

@@ -77,7 +77,7 @@ LogWrapper::tickString(TickerId tickerId, TickType type, const std::string& valu
 }
 
 void
-LogWrapper::error(const int id, const int errorCode, const std::string errorString)
+LogWrapper::error(const int id, const int errorCode, const std::string& errorString)
 {
    if (!print_)
       return;

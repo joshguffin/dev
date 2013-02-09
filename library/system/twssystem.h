@@ -33,7 +33,7 @@ private:
 	TwsSystem();
 	~TwsSystem();
 
-	virtual void error(const int id, const int errorCode, const std::string errorString);
+	virtual void error(const int id, const int errorCode, const std::string&);
    virtual void nextValidId(OrderId);
 
 private:

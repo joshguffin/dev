@@ -21,7 +21,7 @@ protected:
 	virtual void contractDetailsEnd(int reqId);
 	virtual void currentTime(long time);
 	virtual void deltaNeutralValidation(int reqId, const UnderComp& underComp);
-	virtual void error(const int id, const int errorCode, const std::string errorString);
+	virtual void error(const int id, const int errorCode, const std::string& errorString);
 	virtual void execDetails(int reqId, const Contract& contract, const Execution& execution);
 	virtual void execDetailsEnd(int reqId);
 	virtual void fundamentalData(TickerId reqId, const std::string& data);
