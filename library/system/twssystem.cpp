@@ -84,10 +84,11 @@ TwsSystem::nextValidId(OrderId orderId)
 }
 
 int
-TwsSystem::requestMarketData(const TwsApi::Contract& contract) const
+TwsSystem::requestMarketData(const Request& request) const
 {
    static int id = 0;
-   client_->reqMktData(++id, contract, "", false);
+   const TwsApi::Contract& contract = request.contract();
+   client_->reqMktData(++id, contract, "104,165,221,236", false);
    return id;
 }
 

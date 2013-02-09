@@ -8,6 +8,8 @@
 #include <memory>
 #include <stdio.h>
 
+class Request;
+
 class TwsSystem : public LogWrapper
 {
 public:
@@ -23,7 +25,7 @@ public:
 
    TwsSocket& socket();
 
-   int requestMarketData(const TwsApi::Contract&) const;
+   int requestMarketData(const Request&) const;
 
 public:
 

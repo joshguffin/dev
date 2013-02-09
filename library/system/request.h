@@ -2,10 +2,20 @@
 #define system_request_h_INCLUDED
 
 #include "data/bidask.h"
+#include "data/fundamentals.h"
+#include "data/historicalstats.h"
 #include "data/last.h"
+#include "data/singleprice.h"
+#include "data/state.h"
+#include "data/stats.h"
 #include "system/requestkey.h"
 #include <boost/unordered_map.hpp>
 #include <boost/shared_ptr.hpp>
+
+/**
+ * To make a data request, inherit from Request::Consumer and implement any
+ * handle method whose data you wish to use.
+ */
 
 class Request;
 typedef boost::shared_ptr<Request> RequestPtr;
@@ -15,22 +25,41 @@ class Request
 
 public:
 
-   Request(const RequestKey&);
+   class Consumer;
+
+#define REQUEST_TYPES(F) \
+   F(OptionVolume            , 100) \
+   F(OptionOpenInterest      , 101) \
+   F(HistoricalVolatility    , 104) \
+   F(OptionImpliedVolatility , 106) \
+   F(IndexFuturePremium      , 162) \
+   F(MiscellaneousStats      , 165) \
+   F(MarkPrice               , 221) \
+   F(AuctionValues           , 225) \
+   F(Shortable               , 236)
+   IMPLEMENT_SPARSE_ENUM_WRAPPER_IN_CLASS(Generic, REQUEST_TYPES)
+#undef REQUEST_TYPES
+
+public:
+
+   const TwsApi::Contract& contract() const;
 
    template <typename T>
    static void Tick(TickerId, TickType, const T&);
 
-public:
-
-   class Consumer;
+   static void    Add(Consumer&);
+   static void Remove(Consumer&);
 
 private:
+
+   Request(const RequestKey&);
 
    void update(TickType, int);
    void update(TickType, double);
    void update(TickType, const std::string&);
 
    template <typename T> void notify(const T&);
+   template <typename T> void notify(TickType, T);
 
 private:
 
@@ -43,6 +72,14 @@ private:
 
    DataLib::BidAsk bidask_;
    DataLib::Last   last_;
+   DataLib::Mark   mark_;
+   DataLib::Open   open_;
+   DataLib::Close  close_;
+   DataLib::State  state_;
+   DataLib::Stats  stats_;
+
+   DataLib::HistoricalStats histStats_;
+   DataLib::Fundamentals    fundamentals_;
 
 private:
 
@@ -56,37 +93,28 @@ private:
 class Request::Consumer
 {
 public:
-   virtual void handle(const DataLib::BidAsk&);
-   virtual void handle(const DataLib::Last&);
+
+   Consumer(const RequestKey& key) : key_(key) { Request::Add(*this); }
+
+#define DEFINE_HANDLE(Type) virtual void handle(const DataLib::Type&) {}
+   DEFINE_HANDLE(BidAsk);
+   DEFINE_HANDLE(Last);
+   DEFINE_HANDLE(Mark);
+   DEFINE_HANDLE(Open);
+   DEFINE_HANDLE(Close);
+   DEFINE_HANDLE(State);
+   DEFINE_HANDLE(Stats);
+
+   DEFINE_HANDLE(HistoricalStats);
+   DEFINE_HANDLE(Fundamentals);
+#undef DEFINE_HANDLE
+
+   IMPLEMENT_ACCESSOR(const RequestKey& , key);
+
+private:
+   const RequestKey key_;
 };
 
-template <typename T>
-inline void
-Request::notify(const T& item)
-{
-   Consumers::iterator it  = consumers_.begin();
-   Consumers::iterator end = consumers_.end();
-   for (; it != end; ++it)
-      (*it)->handle(item);
-}
-
-template <typename T>
-inline void
-Request::Tick(TickerId tid, TickType type, const T& value)
-{
-   TickerStore& tickers = Tickers();
-
-   TickerStore::iterator loc = tickers.find(tid);
-   if (loc == tickers.end()) {
-      LOG
-         << "Request::Tick: ticker " << tid << " not found ("
-         << type << '=' << value << ')'
-         << endm;
-      return;
-   }
-
-   RequestPtr& request = loc->second;
-   request->update(type, value);
-}
+#include "system/request.ch"
 
 #endif // system_request_h_INCLUDED

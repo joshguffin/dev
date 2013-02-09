@@ -8,6 +8,26 @@ using std::endl;
 const unsigned MAX_ATTEMPTS = 50;
 const unsigned SLEEP_TIME = 10;
 
+class Item : public Request::Consumer
+{
+
+public:
+   Item(const RequestKey& key) : Request::Consumer(key) {}
+
+#define DEFINE_HANDLE(Type) virtual void handle(const DataLib::Type& data) { cout << #Type << ' ' << data << endl; }
+   DEFINE_HANDLE(BidAsk);
+   DEFINE_HANDLE(Last);
+   DEFINE_HANDLE(Mark);
+   DEFINE_HANDLE(Open);
+   DEFINE_HANDLE(Close);
+   DEFINE_HANDLE(State);
+   DEFINE_HANDLE(Stats);
+
+   DEFINE_HANDLE(HistoricalStats);
+   DEFINE_HANDLE(Fundamentals);
+#undef DEFINE_HANDLE
+};
+
 void
 request()
 {
@@ -16,20 +36,9 @@ request()
       return;
 
    requested = true;
-
-   /*
-   Contract contract;
-   contract.symbol   = "AAPL";
-   contract.secType  = "STK";
-   contract.exchange = "SMART";
-   contract.currency = "USD";
-
-   TwsSystem::Instance().socket().reqMktData(1, contract, "221,165,236,258", false);
-   */
-
    RequestKey key("AAPL");
-   Request req(key);
-   Request req2(key);
+
+   new Item(key);
 }
 
 void
@@ -91,7 +100,7 @@ main(int argc, char** argv)
 		while (system.isConnected()) {
 			system.processMessages();
          request();
-         placeOrder();
+         //placeOrder();
       }
 
 		if (attempt >= MAX_ATTEMPTS)
