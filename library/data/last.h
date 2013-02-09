@@ -3,10 +3,6 @@
 
 namespace DataLib {
 
-//==============================================================================
-// Last declaration
-//==============================================================================
-
 class Last
 {
 
@@ -20,6 +16,9 @@ public:
    IMPLEMENT_ACCESSORS(time_t , time);
 
    bool valid() const;
+   void setTime(const std::string&);
+
+   static std::string Request() { return ""; }
 
 private:
 
@@ -27,30 +26,6 @@ private:
    int    size_;
    time_t time_;
 };
-
-//==============================================================================
-// Last implementation 
-//==============================================================================
-
-inline 
-Last::Last()
-   : price_(-1.0f)
-   , size_(-1)
-   , time_(-1)
-{}
-
-inline 
-Last::Last(double price, int size, time_t time)
-   : price_(price)
-   , size_(size)
-   , time_(time)
-{}
-
-inline bool
-Last::valid() const
-{
-   return price_ > 0.0f && size_ > -1 && time_ > -1;
-}
 
 } // end of namespace DataLib
 
