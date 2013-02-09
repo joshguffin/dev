@@ -29,6 +29,8 @@ namespace TwsApi {
 #include "twsapi/IB_LIBRARY/Shared/shared_ptr.h"
 }
 
+#include "twsapi/helpers.h"
+
 #include "stream.h"
 
 #endif // twsapi_common_h_INCLUDED
