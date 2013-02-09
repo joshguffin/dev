@@ -20,7 +20,7 @@ BidAsk::BidAsk(double bid, double ask, int bidSize, int askSize)
 bool
 BidAsk::valid() const
 {
-   return bid_ > 0.0 && ask_ > 0.0 && bidSize_ > 0 && askSize_ > 0;
+   return bid_ >= 0.0 && ask_ >= 0.0 && bidSize_ >= 0 && askSize_ >= 0;
 }
 
 } // end of namespace DataLib

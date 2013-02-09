@@ -12,6 +12,8 @@ public:
 
    IMPLEMENT_ACCESSORS(const std::string& , vals);
 
+   bool valid() const { return true; }
+
 private:
 
    std::string vals_;

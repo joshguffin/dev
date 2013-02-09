@@ -14,7 +14,7 @@ SinglePrice::SinglePrice(double price)
 bool
 SinglePrice::valid() const
 {
-   return price_ > 0.0;
+   return price_ >= 0.0;
 }
 
 } // end of namespace DataLib

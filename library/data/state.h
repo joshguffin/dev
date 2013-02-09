@@ -13,30 +13,40 @@ public:
 #define SHORTABLE(F) \
    F(Available)      \
    F(RequiresLookup) \
-   F(NotAvailable)
+   F(Unavailable)    \
+   F(NotTrading)
    IMPLEMENT_COMPACT_ENUM_WRAPPER_IN_CLASS(Shortable, SHORTABLE)
+#undef SHORTABLE
+
+#define HALTED(F) \
+   F(True)        \
+   F(False)       \
+   F(NotTrading)
+   IMPLEMENT_COMPACT_ENUM_WRAPPER_IN_CLASS(Halted, HALTED)
 #undef SHORTABLE
 
 public:
 
    State();
 
-   IMPLEMENT_ACCESSORS(Shortable::Type, state);
-   IMPLEMENT_ACCESSORS(bool, halted);
+   IMPLEMENT_ACCESSORS(Shortable::Type, shortable);
+   IMPLEMENT_ACCESSORS(Halted::Type   , halted);
+
+   void shortable(double);
+   void halted(double);
 
    bool valid() const;
-   void update(double);
 
 private:
 
-   bool halted_;
-   Shortable::Type state_;
+   Halted::Type    halted_;
+   Shortable::Type shortable_;
 };
 
 inline std::ostream&
 operator<<(std::ostream& os, const State& data)
 {
-   return os << data.state() << ' ' << data.halted();
+   return os << data.shortable() << ' ' << data.halted();
 }
 
 } // end of namespace DataLib
