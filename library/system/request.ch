@@ -13,7 +13,7 @@ Request::notify(const T& item)
 
 template <typename T>
 inline void
-Request::Tick(TickerId tid, TickType type, const T& value)
+Request::Tick(TwsApi::TickerId tid, TwsApi::TickType type, const T& value)
 {
    TickerStore& tickers = Tickers();
 

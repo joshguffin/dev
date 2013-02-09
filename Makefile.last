@@ -24,14 +24,14 @@ define CREATE_TARGET
 	$(eval $(1)_DEPENDS=$($(1)_OBJECTS:.o=.d))
 	$(eval $(1)_EXPANDED_OBJECTS=$(foreach obj, $($(1)_OBJECTS), $(CURDIR)/$(obj)))
 
+	$(eval APP_LIBDEPS=$(foreach lib, $(LIBRARIES), $(lib)_lib))
 	$(eval APP_DEPENDS=$($(1)_DEPENDS) $(APP_DEPENDS))
 	$(eval APP_OBJECTS=$($(1)_EXPANDED_OBJECTS) $(APP_OBJECTS))
 
 -include $($(1)_DEPENDS)
 
-$(1): $($(1)_EXPANDED_OBJECTS)
+$(1): $($(1)_EXPANDED_OBJECTS) $(APP_LIBDEPS)
 	$(CXX) $(LIBS) $(LDFLAGS) $($(1)_EXPANDED_OBJECTS) $($(1)_LDFLAGS) $(call LIST_LIBRARIES,$(1)) -o $(1)
-
 endef
 
 ###################################################################################
@@ -74,7 +74,7 @@ $(eval $(1)_lib_LIBRARY=$(CPPROOT)/library/lib/lib$(1).a)
 
 -include $($(1)_lib_DEPENDS)
 
-# create the actual library target (redirect will not cause library to be rebuilt every time)
+# create the actual library target (redirect will prevent library from being rebuilt every time)
 $($(1)_lib_LIBRARY): $($(1)_lib_OBJECTS)
 	@mkdir -p $(CPPROOT)/library/lib/
 	@/bin/echo -e "ar rcs `echo $($(1)_lib_LIBRARY) $($(1)_lib_OBJECTS) | sed 's/ / \\\\\n/g'`"

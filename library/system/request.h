@@ -43,10 +43,10 @@ public:
 public:
 
    const TwsApi::Contract& contract() const;
-   IMPLEMENT_ACCESSOR(TickerId, tid);
+   IMPLEMENT_ACCESSOR(TwsApi::TickerId, tid);
 
    template <typename T>
-   static void Tick(TickerId, TickType, const T&);
+   static void Tick(TwsApi::TickerId, TwsApi::TickType, const T&);
 
    static void    Add(Consumer&);
    static void Remove(Consumer&);
@@ -55,17 +55,17 @@ private:
 
    Request(const RequestKey&);
 
-   void update(TickType, int);
-   void update(TickType, double);
-   void update(TickType, const std::string&);
+   void update(TwsApi::TickType, int);
+   void update(TwsApi::TickType, double);
+   void update(TwsApi::TickType, const std::string&);
 
    template <typename T> void notify(const T&);
-   template <typename T> void notify(TickType, T);
+   template <typename T> void notify(TwsApi::TickType, T);
 
 private:
 
    RequestKey key_;
-   TickerId   tid_;
+   TwsApi::TickerId tid_;
 
    typedef std::set<Consumer*> Consumers;
 
@@ -84,8 +84,8 @@ private:
 
 private:
 
-   typedef boost::unordered_map<RequestKey, RequestPtr> KeyStore;
-   typedef boost::unordered_map<TickerId,   RequestPtr> TickerStore;
+   typedef boost::unordered_map<RequestKey       , RequestPtr> KeyStore;
+   typedef boost::unordered_map<TwsApi::TickerId , RequestPtr> TickerStore;
 
    static    KeyStore& Keys();
    static TickerStore& Tickers();

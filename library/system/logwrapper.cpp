@@ -4,7 +4,7 @@
 #define PRINT(x) ' ' << #x << '=' << x
 
 void
-LogWrapper::nextValidId(OrderId orderId)
+LogWrapper::nextValidId(TwsApi::OrderId orderId)
 {
    if (!print_)
       return;
@@ -17,8 +17,8 @@ LogWrapper::nextValidId(OrderId orderId)
 
 
 void
-LogWrapper::tickPrice(TickerId tickerId,
-                     TickType type,
+LogWrapper::tickPrice(TwsApi::TickerId tickerId,
+                     TwsApi::TickType type,
                      double price,
                      int canAutoExecute)
 {
@@ -35,7 +35,7 @@ LogWrapper::tickPrice(TickerId tickerId,
 }
 
 void
-LogWrapper::tickSize(TickerId tickerId, TickType type, int size)
+LogWrapper::tickSize(TwsApi::TickerId tickerId, TwsApi::TickType type, int size)
 {
    if (!print_)
       return;
@@ -49,7 +49,7 @@ LogWrapper::tickSize(TickerId tickerId, TickType type, int size)
 }
 
 void
-LogWrapper::tickGeneric(TickerId tickerId, TickType type, double value)
+LogWrapper::tickGeneric(TwsApi::TickerId tickerId, TwsApi::TickType type, double value)
 {
    if (!print_)
       return;
@@ -63,7 +63,7 @@ LogWrapper::tickGeneric(TickerId tickerId, TickType type, double value)
 }
 
 void
-LogWrapper::tickString(TickerId tickerId, TickType type, const std::string& value)
+LogWrapper::tickString(TwsApi::TickerId tickerId, TwsApi::TickType type, const std::string& value)
 {
    if (!print_)
       return;
@@ -91,8 +91,8 @@ LogWrapper::error(const int id, const int errorCode, const std::string& errorStr
 }
 
 void
-LogWrapper::tickEFP(TickerId tickerId,
-                    TickType type,
+LogWrapper::tickEFP(TwsApi::TickerId tickerId,
+                    TwsApi::TickType type,
                     double basisPoints,
                     const std::string& formattedBasisPoints,
                     double totalDividends,
@@ -119,10 +119,10 @@ LogWrapper::tickEFP(TickerId tickerId,
 }
 
 void
-LogWrapper::openOrder(OrderId orderId,
-                      const Contract& c,
-                      const Order& o,
-                      const OrderState& ostate)
+LogWrapper::openOrder(TwsApi::OrderId orderId,
+                      const TwsApi::Contract& c,
+                      const TwsApi::Order& o,
+                      const TwsApi::OrderState& ostate)
 {
    if (!print_)
       return;
@@ -173,7 +173,7 @@ LogWrapper::updateAccountValue(const std::string& key,
 }
 
 void
-LogWrapper::updatePortfolio(const Contract& contract,
+LogWrapper::updatePortfolio(const TwsApi::Contract& contract,
                             int position,
                             double marketPrice,
                             double marketValue,
@@ -222,7 +222,7 @@ LogWrapper::accountDownloadEnd(const std::string& accountName)
 }
 
 void
-LogWrapper::contractDetails(int reqId, const ContractDetails& contractDetails)
+LogWrapper::contractDetails(int reqId, const TwsApi::ContractDetails& contractDetails)
 {
    if (!print_)
       return;
@@ -234,7 +234,7 @@ LogWrapper::contractDetails(int reqId, const ContractDetails& contractDetails)
 }
 
 void
-LogWrapper::bondContractDetails(int reqId, const ContractDetails& contractDetails)
+LogWrapper::bondContractDetails(int reqId, const TwsApi::ContractDetails& contractDetails)
 {
    if (!print_)
       return;
@@ -258,7 +258,7 @@ LogWrapper::contractDetailsEnd(int reqId)
 }
 
 void
-LogWrapper::execDetails(int reqId, const Contract& contract, const Execution& execution)
+LogWrapper::execDetails(int reqId, const TwsApi::Contract& contract, const TwsApi::Execution& execution)
 {
    if (!print_)
       return;
@@ -283,7 +283,7 @@ LogWrapper::execDetailsEnd(int reqId)
 
 
 void
-LogWrapper::updateMktDepth(TickerId id,
+LogWrapper::updateMktDepth(TwsApi::TickerId id,
                            int position,
                            int operation,
                            int side,
@@ -305,7 +305,7 @@ LogWrapper::updateMktDepth(TickerId id,
 }
 
 void
-LogWrapper::updateMktDepthL2(TickerId id,
+LogWrapper::updateMktDepthL2(TwsApi::TickerId id,
                              int position,
                              std::string marketMaker,
                              int operation,
@@ -359,7 +359,7 @@ LogWrapper::managedAccounts(const std::string& accountsList)
 }
 
 void
-LogWrapper::receiveFA(faDataType pFaDataType, const std::string& cxml)
+LogWrapper::receiveFA(TwsApi::faDataType pFaDataType, const std::string& cxml)
 {
    if (!print_)
       return;
@@ -372,7 +372,7 @@ LogWrapper::receiveFA(faDataType pFaDataType, const std::string& cxml)
 }
 
 void
-LogWrapper::historicalData(TickerId reqId,
+LogWrapper::historicalData(TwsApi::TickerId reqId,
                            const std::string& date,
                            double open,
                            double high,
@@ -416,7 +416,7 @@ LogWrapper::scannerParameters(const std::string& xml)
 void
 LogWrapper::scannerData(int reqId,
                         int rank,
-                        const ContractDetails& contractDetails,
+                        const TwsApi::ContractDetails& contractDetails,
                         const std::string& distance,
                         const std::string& benchmark,
                         const std::string& projection,
@@ -449,7 +449,7 @@ LogWrapper::scannerDataEnd(int reqId)
 }
 
 void
-LogWrapper::realtimeBar(TickerId reqId,
+LogWrapper::realtimeBar(TwsApi::TickerId reqId,
                         long time,
                         double open,
                         double high,
@@ -477,7 +477,7 @@ LogWrapper::realtimeBar(TickerId reqId,
 }
 
 void
-LogWrapper::fundamentalData(TickerId reqId, const std::string& data)
+LogWrapper::fundamentalData(TwsApi::TickerId reqId, const std::string& data)
 {
    if (!print_)
       return;
@@ -490,7 +490,7 @@ LogWrapper::fundamentalData(TickerId reqId, const std::string& data)
 }
 
 void
-LogWrapper::deltaNeutralValidation(int reqId, const UnderComp& underComp)
+LogWrapper::deltaNeutralValidation(int reqId, const TwsApi::UnderComp& underComp)
 {
    if (!print_)
       return;
@@ -514,7 +514,7 @@ LogWrapper::tickSnapshotEnd(int reqId)
 }
 
 void
-LogWrapper::marketDataType(TickerId reqId, int marketDataType)
+LogWrapper::marketDataType(TwsApi::TickerId reqId, int marketDataType)
 {
    if (!print_)
       return;
@@ -527,7 +527,7 @@ LogWrapper::marketDataType(TickerId reqId, int marketDataType)
 }
 
 void
-LogWrapper::orderStatus(OrderId orderId,
+LogWrapper::orderStatus(TwsApi::OrderId orderId,
                         const std::string& status,
                         int filled,
                         int remaining,
@@ -566,8 +566,8 @@ LogWrapper::currentTime(long time)
 }
 
 void
-LogWrapper::tickOptionComputation(TickerId tickerId,
-                                  TickType type,
+LogWrapper::tickOptionComputation(TwsApi::TickerId tickerId,
+                                  TwsApi::TickType type,
                                   double impliedVol,
                                   double delta,
                                   double optPrice,

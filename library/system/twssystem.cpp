@@ -77,11 +77,15 @@ TwsSystem::error(const int id, const int errorCode, const std::string& errorStri
 }
 
 void
-TwsSystem::nextValidId(OrderId orderId)
+TwsSystem::nextValidId(TwsApi::OrderId orderId)
 {
    oid_ = orderId;
    LogWrapper::nextValidId(orderId);
 }
+
+
+
+// --- Market data -------------------------------------------------------------
 
 int
 TwsSystem::requestMarketData(const Request& request) const
@@ -99,25 +103,25 @@ TwsSystem::cancelMarketData(const Request& request) const
 }
 
 void
-TwsSystem::tickPrice(TickerId id, TickType type, double value, int autoex)
+TwsSystem::tickPrice(TwsApi::TickerId id, TwsApi::TickType type, double value, int autoex)
 {
    Request::Tick(id, type, value);
 }
 
 void
-TwsSystem::tickSize(TickerId id, TickType type, int value)
+TwsSystem::tickSize(TwsApi::TickerId id, TwsApi::TickType type, int value)
 {
    Request::Tick(id, type, value);
 }
 
 void
-TwsSystem::tickGeneric(TickerId id, TickType type, double value)
+TwsSystem::tickGeneric(TwsApi::TickerId id, TwsApi::TickType type, double value)
 {
    Request::Tick(id, type, value);
 }
 
 void
-TwsSystem::tickString(TickerId id, TickType type, const std::string& value)
+TwsSystem::tickString(TwsApi::TickerId id, TwsApi::TickType type, const std::string& value)
 {
    cout << "String: " << id << ' ' << type << ' ' << value << endl;
    Request::Tick(id, type, value);

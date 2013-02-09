@@ -19,9 +19,9 @@ public:
    void logging(bool);
 	void processMessages();
 
-   IMPLEMENT_ACCESSORS(unsigned int       , port);
-   IMPLEMENT_ACCESSORS(const std::string& , host);
-   IMPLEMENT_ACCESSORS(const OrderId&     , oid);
+   IMPLEMENT_ACCESSORS(unsigned int           , port);
+   IMPLEMENT_ACCESSORS(const std::string&     , host);
+   IMPLEMENT_ACCESSORS(const TwsApi::OrderId& , oid);
 
    TwsSocket& socket();
 
@@ -39,18 +39,18 @@ private:
 	~TwsSystem();
 
 	virtual void error(const int id, const int errorCode, const std::string&);
-   virtual void nextValidId(OrderId);
-	virtual void tickGeneric(TickerId tickerId, TickType tickType, double value);
-	virtual void tickPrice(TickerId tickerId, TickType field, double price, int canAutoExecute);
-	virtual void tickSize(TickerId tickerId, TickType field, int size);
-	virtual void tickString(TickerId tickerId, TickType tickType, const std::string& value);
+   virtual void nextValidId(TwsApi::OrderId);
+	virtual void tickGeneric (TwsApi::TickerId, TwsApi::TickType, double value);
+	virtual void tickPrice   (TwsApi::TickerId, TwsApi::TickType, double price, int canAutoExecute);
+	virtual void tickSize    (TwsApi::TickerId, TwsApi::TickType, int size);
+	virtual void tickString  (TwsApi::TickerId, TwsApi::TickType, const std::string& value);
 
 private:
 
    std::string  host_;
    unsigned int port_;
 
-   OrderId oid_;
+   TwsApi::OrderId oid_;
 	boost::scoped_ptr<TwsSocket> client_;
 };
 

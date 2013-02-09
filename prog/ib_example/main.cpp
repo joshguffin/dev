@@ -39,8 +39,8 @@ placeOrder()
 
    placed = true;
 
-   Contract contract;
-   Order order;
+   TwsApi::Contract contract;
+   TwsApi::Order order;
 
    contract.symbol   = "AAPL";
    contract.secType  = "STK";
@@ -52,7 +52,7 @@ placeOrder()
    order.orderType     = "LMT";
    order.lmtPrice      = 0.01;
 
-   const OrderId& oid = TwsSystem::Instance().oid();
+   const TwsApi::OrderId& oid = TwsSystem::Instance().oid();
    cout
       << "Placing order " << oid
       << ' ' << order.action.c_str()

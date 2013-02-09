@@ -22,7 +22,7 @@ Request::Add(Consumer& consumer)
    RequestPtr& pt = Keys()[key];
    if (!pt) {
       pt.reset(new Request(key));
-      TickerId id = pt->tid_;
+      TwsApi::TickerId id = pt->tid_;
       Tickers()[id] = pt;
    }
 
@@ -75,7 +75,7 @@ Request::contract() const
       return;
 
 void
-Request::update(TickType type, int value)
+Request::update(TwsApi::TickType type, int value)
 {
    switch (type) {
       HANDLE_CASE(BID_SIZE   , bidask_    , bidSize);
@@ -114,7 +114,7 @@ Request::update(TwsApi::TickType type, double value)
 }
 
 void
-Request::update(TickType type, const std::string& value)
+Request::update(TwsApi::TickType type, const std::string& value)
 {
    switch (type) {
       HANDLE_CASE(LAST_TIMESTAMP     , last_         , setTime);
