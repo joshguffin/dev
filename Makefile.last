@@ -55,10 +55,6 @@ define CREATE_TEST_TARGET
 
 -include $($(1)_DEPS)
 
-# print what we're doing
-$(1)_description:
-	@/bin/echo "Building test binary '$(1)'"
-
 $($(1)_TARG) : $(1)_description $($(1)_OBJ)
 	$(CXX) $($(1)_OBJ) $(LIBS) $($(1)_LIBS) $(LDFLAGS) -lboost_unit_test_framework -o $($(1)_TARG)
 
@@ -85,7 +81,7 @@ $(eval $(1)_lib_LIBRARY=$(CPPROOT)/library/lib/lib$(1).a)
 # create the actual library target (redirect will prevent library from being rebuilt every time)
 $($(1)_lib_LIBRARY): $($(1)_lib_OBJECTS)
 	@mkdir -p $(CPPROOT)/library/lib/
-	@/bin/echo -e "ar rcs `echo $($(1)_lib_LIBRARY) $($(1)_lib_OBJECTS) | sed 's/ / \\\\\n/g'`"
+	@/bin/echo -e "ar rcs `echo $($(1)_lib_LIBRARY) $($(1)_lib_OBJECTS) | sed 's/ /\n/g'`"
 	@ar rcs $($(1)_lib_LIBRARY) $($(1)_lib_OBJECTS)
 
 # print what we're doing
@@ -96,7 +92,8 @@ $(1)_lib_description:
 $(1)_lib: $(1)_lib_description $($(1)_lib_LIBRARY)
 
 $(1)_lib_clean:
-	rm -f $($(1)_lib_OBJECTS) $($(1)_lib_DEPENDS) $($(1)_lib_LIBRARY)
+	@echo "Cleaning $(1) library"
+	@rm -f $($(1)_lib_OBJECTS) $($(1)_lib_DEPENDS) $($(1)_lib_LIBRARY)
 endef
 
 ###################################################################################
@@ -123,5 +120,11 @@ tests:
 tests_all   : $(TEST_TARGETS)
 tests_clean : $(foreach target, $(TEST_TARGETS), $(target)_clean)
 
+distclean: $(foreach lib, $(LIBRARIES), $(lib)_lib_clean) clean 
+
 clean:
-	rm -f $(APPPROGS) $(APP_OBJECTS) $(APP_DEPENDS) $(TEST_DEPENDS) $(TEST_TARGETS) *.o *.d
+	rm -f *.o *.d $(APPPROGS) $(APP_OBJECTS) $(APP_DEPENDS) $(TEST_DEPENDS) $(TEST_TARGETS)
+
+.phony: targets tests tests_all tests_clean distclean clean
+
+

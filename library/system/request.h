@@ -107,7 +107,7 @@ class Request::Consumer
 public:
 
    Consumer(const RequestKey& key) : key_(key) { Request::Add(*this); }
-   virtual ~Consumer() {}
+   virtual ~Consumer() { Request::Remove(*this); }
 
    // implement any to receive data
    virtual void handle(const DataLib::BidAsk&) {}

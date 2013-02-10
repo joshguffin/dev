@@ -50,4 +50,10 @@ RequestKey::operator==(const RequestKey& key) const
    return key.contract_ == contract_;
 }
 
+inline std::ostream&
+operator<<(std::ostream& os, const RequestKey& key)
+{
+   return os << key.contract();
+}
+
 #endif // system_requestkey_h_INCLUDED

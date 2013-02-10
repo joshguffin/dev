@@ -66,7 +66,7 @@ TwsSystem::error(const int id, const int errorCode, const std::string& errorStri
       return;
    }
 
-   if (errorCode == 200) 
+   if (errorCode == 200)
       DataWrapper::failed(id, errorString, errorCode);
 }
 
