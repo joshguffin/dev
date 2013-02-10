@@ -52,6 +52,24 @@ Request::Remove(Consumer& consumer)
    }
 }
 
+void
+Request::Tick(TwsApi::TickerId tid, const Failure& reason)
+{
+   TickerStore& tickers = Tickers();
+
+   TickerStore::iterator loc = tickers.find(tid);
+   if (loc == tickers.end()) {
+      LOG
+         << "Request::Tick: ticker " << tid << " not found (failure "
+         << reason << ')'
+         << endm;
+      return;
+   }
+
+   RequestPtr& request = loc->second;
+   request->notify(reason);
+}
+
 Request::Request(const RequestKey& key)
    : key_(key)
    , tid_(-1)

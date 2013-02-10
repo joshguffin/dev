@@ -3,6 +3,8 @@
 
 #include "twsapi/common.h"
 
+class TwsSocket;
+
 class LogWrapper : public TwsApi::EWrapper
 {
 
@@ -51,6 +53,8 @@ protected:
 	virtual void winError(const std::string &str, int lastError);
 
    IMPLEMENT_ACCESSORS(bool, print);
+
+   virtual TwsSocket& client() const = 0;
 
 private:
 

@@ -20,12 +20,17 @@
 class Request;
 typedef boost::shared_ptr<Request> RequestPtr;
 
+//==============================================================================
+// Request declaration
+//==============================================================================
+
 class Request
 {
 
 public:
 
    class Consumer;
+   class Failure;
 
 #define REQUEST_TYPES(F) \
    F(OptionVolume            , 100) \
@@ -47,6 +52,7 @@ public:
 
    template <typename T>
    static void Tick(TwsApi::TickerId, TwsApi::TickType, const T&);
+   static void Tick(TwsApi::TickerId, const Failure&);
 
    static void    Add(Consumer&);
    static void Remove(Consumer&);
@@ -59,6 +65,8 @@ private:
    void update(TwsApi::TickType, double);
    void update(TwsApi::TickType, const std::string&);
 
+   void failure(const std::string&, int);
+
    template <typename T> void notify(const T&);
    template <typename T> void notify(TwsApi::TickType, T);
 
@@ -66,10 +74,6 @@ private:
 
    RequestKey key_;
    TwsApi::TickerId tid_;
-
-   typedef std::set<Consumer*> Consumers;
-
-   Consumers consumers_;
 
    DataLib::BidAsk bidask_;
    DataLib::Last   last_;
@@ -82,6 +86,9 @@ private:
    DataLib::HistoricalStats histStats_;
    DataLib::Fundamentals    fundamentals_;
 
+   typedef std::set<Consumer*> Consumers;
+   Consumers consumers_;
+
 private:
 
    typedef boost::unordered_map<RequestKey       , RequestPtr> KeyStore;
@@ -91,6 +98,10 @@ private:
    static TickerStore& Tickers();
 };
 
+//==============================================================================
+// Consumer declaration/implementation
+//==============================================================================
+
 class Request::Consumer
 {
 public:
@@ -98,24 +109,49 @@ public:
    Consumer(const RequestKey& key) : key_(key) { Request::Add(*this); }
    virtual ~Consumer() {}
 
-#define DEFINE_HANDLE(Type) virtual void handle(const DataLib::Type&) {}
-   DEFINE_HANDLE(BidAsk);
-   DEFINE_HANDLE(Last);
-   DEFINE_HANDLE(Mark);
-   DEFINE_HANDLE(Open);
-   DEFINE_HANDLE(Close);
-   DEFINE_HANDLE(State);
-   DEFINE_HANDLE(Stats);
-
-   DEFINE_HANDLE(HistoricalStats);
-   DEFINE_HANDLE(Fundamentals);
-#undef DEFINE_HANDLE
+   // implement any to receive data
+   virtual void handle(const DataLib::BidAsk&) {}
+   virtual void handle(const DataLib::Last&) {}
+   virtual void handle(const DataLib::Mark&) {}
+   virtual void handle(const DataLib::Open&) {}
+   virtual void handle(const DataLib::Close&) {}
+   virtual void handle(const DataLib::State&) {}
+   virtual void handle(const DataLib::Stats&) {}
+   virtual void handle(const DataLib::HistoricalStats&) {}
+   virtual void handle(const DataLib::Fundamentals&) {}
+   virtual void handle(const Request::Failure&) {}
 
    IMPLEMENT_ACCESSOR(const RequestKey& , key);
 
 private:
    const RequestKey key_;
 };
+
+//==============================================================================
+// Failure declaration/implementation
+//==============================================================================
+
+class Request::Failure
+{
+
+public:
+
+   Failure(const std::string& reason, int code) : reason_(reason), code_(code) {}
+
+   IMPLEMENT_ACCESSOR(const std::string& , reason);
+   IMPLEMENT_ACCESSOR(int , code);
+
+private:
+
+   std::string reason_;
+   int code_;
+};
+
+inline std::ostream&
+operator<<(std::ostream& os, const Request::Failure& failure)
+{
+   return os << failure.code() << ' ' << failure.reason();
+}
 
 #include "system/request.ch"
 

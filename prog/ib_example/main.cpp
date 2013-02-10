@@ -15,23 +15,22 @@ public:
    Item(const RequestKey& key) : Request::Consumer(key) {}
    virtual ~Item() {}
 
-#define DEFINE_HANDLE(Type) virtual void handle(const DataLib::Type& data) { cout << #Type << ' ' << data << endl; }
-   DEFINE_HANDLE(BidAsk);
-   DEFINE_HANDLE(Last);
-   DEFINE_HANDLE(Mark);
-   DEFINE_HANDLE(Open);
-   DEFINE_HANDLE(Close);
-   DEFINE_HANDLE(State);
-   DEFINE_HANDLE(Stats);
-
-   DEFINE_HANDLE(HistoricalStats);
-   DEFINE_HANDLE(Fundamentals);
-#undef DEFINE_HANDLE
+   virtual void handle(const DataLib::BidAsk& data) { cout << "BidAsk" << ' ' << data << endl; }
+   virtual void handle(const DataLib::Last&   data) { cout << "Last"   << ' ' << data << endl; }
+   virtual void handle(const DataLib::Mark&   data) { cout << "Mark"   << ' ' << data << endl; }
+   virtual void handle(const DataLib::Open&   data) { cout << "Open"   << ' ' << data << endl; }
+   virtual void handle(const DataLib::Close&  data) { cout << "Close"  << ' ' << data << endl; }
+   virtual void handle(const DataLib::State&  data) { cout << "State"  << ' ' << data << endl; }
+   virtual void handle(const DataLib::Stats&  data) { cout << "Stats"  << ' ' << data << endl; }
+   virtual void handle(const DataLib::HistoricalStats&  data) { cout << "HistoricalStats" << ' ' << data << endl; }
+   virtual void handle(const DataLib::Fundamentals&     data) { cout << "Fundamentals"    << ' ' << data << endl; }
+   virtual void handle(const Request::Failure& data)          { cout << "Failure"         << ' ' << data << endl; }
 };
 
 void
 placeOrder()
 {
+   /*
    static bool placed = false;
 
    if (placed)
@@ -62,6 +61,7 @@ placeOrder()
       << endl;
 
    TwsSystem::Instance().socket().placeOrder(oid, contract, order);
+   */
 }
 
 int
@@ -91,7 +91,7 @@ main(int argc, char** argv)
 			system.processMessages();
 
          if (!item && i < 3) {
-            RequestKey key("AAPL");
+            RequestKey key("405");
             item = new Item(key);
          }
 
