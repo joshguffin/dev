@@ -13,5 +13,6 @@ using std::endl;
 #include "base/headermacros.h"
 #include "system/log.h"
 #include "system/twssystem.h"
+#include "string/stringtable.h"
 
 #endif // system_common_h_INCLUDED

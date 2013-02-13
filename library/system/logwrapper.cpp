@@ -187,6 +187,7 @@ LogWrapper::updatePortfolio(const TwsApi::Contract& contract,
 
    cout
       << "LogWrapper::updatePortfolio: "
+      << PRINT(contract)
       << PRINT(position)
       << PRINT(marketPrice)
       << PRINT(marketValue)

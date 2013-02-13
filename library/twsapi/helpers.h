@@ -1,44 +1,107 @@
 #ifndef helpers_h_INCLUDED
 #define helpers_h_INCLUDED
 
+#include "string/stringtable.h"
+#include "string/csv.h"
+
 namespace TwsApi {
 
 // === Contract helpers ========================================================
 
-#define APPLY_TO_CONTRACT(Macro, C1, C2) \
-      Macro(conId            , C1 , C2) && \
-      Macro(symbol           , C1 , C2) && \
-      Macro(secType          , C1 , C2) && \
-      Macro(expiry           , C1 , C2) && \
-      Macro(strike           , C1 , C2) && \
-      Macro(right            , C1 , C2) && \
-      Macro(multiplier       , C1 , C2) && \
-      Macro(exchange         , C1 , C2) && \
-      Macro(primaryExchange  , C1 , C2) && \
-      Macro(currency         , C1 , C2) && \
-      Macro(localSymbol      , C1 , C2) && \
-      Macro(includeExpired   , C1 , C2) && \
-      Macro(secIdType        , C1 , C2) && \
-      Macro(secId            , C1 , C2) && \
-      Macro(underComp        , C1 , C2) && \
-      Macro(comboLegsDescrip , C1 , C2);
-
-#define COMPARE(member, C1, C2) C1.member == C2.member
 inline bool
 operator==(const Contract& lhs, const Contract& rhs)
 {
-   return APPLY_TO_CONTRACT(COMPARE, lhs, rhs);
+   return (lhs.conId           == rhs.conId           &&
+           lhs.symbol          == rhs.symbol          &&
+           lhs.secType         == rhs.secType         &&
+           lhs.expiry          == rhs.expiry          &&
+           lhs.strike          == rhs.strike          &&
+           lhs.right           == rhs.right           &&
+           lhs.multiplier      == rhs.multiplier      &&
+           lhs.exchange        == rhs.exchange        &&
+           lhs.primaryExchange == rhs.primaryExchange &&
+           lhs.currency        == rhs.currency        &&
+           lhs.localSymbol     == rhs.localSymbol     &&
+           lhs.includeExpired  == rhs.includeExpired  &&
+           lhs.secIdType       == rhs.secIdType       &&
+           lhs.secId           == rhs.secId);
 }
-#undef COMPARE
 
-#define COMPARE(member, C1, C2) C1.member < C2.member || C1.member == C2.member
+inline bool
+operator!=(const Contract& lhs, const Contract& rhs)
+{
+   return !operator==(lhs, rhs);
+}
+
+#define COMPARE(Member)      \
+if (lhs.Member < rhs.Member) \
+   return true;              \
+if (lhs.Member > rhs.Member) \
+   return false;
+
 inline bool
 operator<(const Contract& lhs, const Contract& rhs)
 {
-   return APPLY_TO_CONTRACT(COMPARE, lhs, rhs);
+   COMPARE(conId);
+   COMPARE(symbol);
+   COMPARE(secType);
+   COMPARE(expiry);
+   COMPARE(strike);
+   COMPARE(right);
+   COMPARE(multiplier);
+   COMPARE(exchange);
+   COMPARE(primaryExchange);
+   COMPARE(currency);
+   COMPARE(localSymbol);
+   COMPARE(includeExpired);
+   COMPARE(secIdType);
+   COMPARE(secId);
+
+   return false;
 }
 #undef COMPARE
-#undef APPLY_TO_CONTRACT
+
+inline void
+contractSeparated(StringLib::CSV& csv, const TwsApi::Contract& contract)
+{
+   csv
+      << contract.conId
+      << contract.symbol
+      << contract.secType
+      << contract.expiry
+      << contract.strike
+      << contract.right
+      << contract.multiplier
+      << contract.exchange
+      << contract.primaryExchange
+      << contract.currency
+      << contract.localSymbol
+      << contract.includeExpired
+      << contract.secIdType
+      << contract.secId;
+}
+
+// appropriate for StringLib::CSV or StringLib::StringTable;
+template <typename T>
+inline void
+contractHeaders(T& stream)
+{
+   stream
+      << "Contract ID"
+      << "Symbol"
+      << "Security Type"
+      << "Expiry"
+      << "Strike"
+      << "Right"
+      << "Multiplier"
+      << "Exchange"
+      << "Primary Exchange"
+      << "Currency"
+      << "Local Symbol"
+      << "Include Expired"
+      << "Security Id Type"
+      << "Security Id";
+}
 
 // === Order helpers ===========================================================
 

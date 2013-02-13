@@ -1,14 +1,14 @@
 #ifndef system_twssystem_h_INCLUDED
 #define system_twssystem_h_INCLUDED
 
-#include "system/datawrapper.h"
+#include "system/accountwrapper.h"
 #include "system/twssocket.h"
 
 #include <boost/scoped_ptr.hpp>
 #include <memory>
 #include <stdio.h>
 
-class TwsSystem : public DataWrapper
+class TwsSystem : public AccountWrapper
 {
 public:
 
