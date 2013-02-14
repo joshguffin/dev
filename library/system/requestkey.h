@@ -3,6 +3,8 @@
 
 #include <boost/functional/hash.hpp>
 
+namespace SystemLib {
+
 class RequestKey
 {
 
@@ -55,5 +57,7 @@ operator<<(std::ostream& os, const RequestKey& key)
 {
    return os << key.contract();
 }
+
+} // end of namespace SystemLib
 
 #endif // system_requestkey_h_INCLUDED

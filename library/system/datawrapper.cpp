@@ -2,6 +2,8 @@
 #include "system/datawrapper.h"
 #include "system/request.h"
 
+namespace SystemLib {
+
 int
 DataWrapper::requestMarketData(const Request& request) const
 {
@@ -49,3 +51,4 @@ DataWrapper::failed(TwsApi::TickerId id, const std::string& reason, int code)
    Request::Tick(id, fail);
 }
 
+} // end of namespace SystemLib

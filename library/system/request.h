@@ -17,6 +17,8 @@
  * handle method whose data you wish to use.
  */
 
+namespace SystemLib {
+
 class Request;
 typedef boost::shared_ptr<Request> RequestPtr;
 
@@ -152,6 +154,8 @@ operator<<(std::ostream& os, const Request::Failure& failure)
 {
    return os << failure.code() << ' ' << failure.reason();
 }
+
+} // end of namespace SystemLib
 
 #include "system/request.ch"
 

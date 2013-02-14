@@ -1,6 +1,8 @@
 #ifndef system_request_ch_INCLUDED
 #define system_request_ch_INCLUDED
 
+namespace SystemLib {
+
 template <typename T>
 inline void
 Request::notify(const T& item)
@@ -29,5 +31,7 @@ Request::Tick(TwsApi::TickerId tid, TwsApi::TickType type, const T& value)
    RequestPtr& request = loc->second;
    request->update(type, value);
 }
+
+} // end of namespace SystemLib
 
 #endif // system_request_ch_INCLUDED

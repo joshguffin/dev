@@ -6,6 +6,8 @@
 const unsigned MAX_ATTEMPTS = 50;
 const unsigned SLEEP_TIME = 10;
 
+using namespace SystemLib;
+
 //==============================================================================
 // AccountConsumer; receives account data from tws
 //==============================================================================

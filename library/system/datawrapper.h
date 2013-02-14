@@ -3,6 +3,8 @@
 
 #include "system/logwrapper.h"
 
+namespace SystemLib {
+
 class Request;
 
 class DataWrapper : public LogWrapper
@@ -27,5 +29,6 @@ private:
 	virtual void tickString (TwsApi::TickerId, TwsApi::TickType, const std::string& value);
 };
 
-#endif // system_datawrapper_h_INCLUDED
+} // end of namespace SystemLib
 
+#endif // system_datawrapper_h_INCLUDED

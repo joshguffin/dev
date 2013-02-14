@@ -1,5 +1,7 @@
 #include "system/common.h"
 
+namespace SystemLib {
+
 TwsSystem&
 TwsSystem::Instance()
 {
@@ -76,3 +78,5 @@ TwsSystem::nextValidId(TwsApi::OrderId orderId)
    oid_ = orderId;
    LogWrapper::nextValidId(orderId);
 }
+
+} // end of namespace SystemLib

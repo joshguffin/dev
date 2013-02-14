@@ -8,7 +8,8 @@
 #include <boost/unordered_map.hpp>
 
 namespace StringLib { class StringTable; }
-class Request;
+
+namespace SystemLib {
 
 class AccountWrapper : public DataWrapper
 {
@@ -123,5 +124,7 @@ AccountWrapper::Position::Headers(T& streamManip)
       << "Unrealized PnL"
       << "Realized PnL";
 }
+
+} // end of namespace SystemLib
 
 #endif // system_accountwrapper_h_INCLUDED

@@ -8,6 +8,8 @@
 #include <memory>
 #include <stdio.h>
 
+namespace SystemLib {
+
 class TwsSystem : public AccountWrapper
 {
 public:
@@ -44,5 +46,7 @@ private:
    TwsApi::OrderId oid_;
 	boost::scoped_ptr<TwsSocket> client_;
 };
+
+} // end of namespace SystemLib
 
 #endif // system_twssystem_h_INCLUDED

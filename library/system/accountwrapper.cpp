@@ -3,6 +3,8 @@
 
 #include <boost/algorithm/string.hpp>
 
+namespace SystemLib {
+
 void
 AccountWrapper::managedAccounts(const std::string& list)
 {
@@ -122,3 +124,4 @@ AccountWrapper::Consumer::~Consumer()
    TwsSystem::Instance().removeConsumer(*this);
 }
 
+} // end of namespace SystemLib

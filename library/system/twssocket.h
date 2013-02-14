@@ -7,6 +7,8 @@ namespace TwsApi {
 class EWrapper;
 }
 
+namespace SystemLib {
+
 class TwsSocket : public TwsApi::EClientSocketBase
 {
 public:
@@ -88,5 +90,7 @@ private:
 	time_t sleepDeadline_;
 	int fd_;
 };
+
+} // end of namespace SystemLib
 
 #endif // twssocket_h_INCLUDED

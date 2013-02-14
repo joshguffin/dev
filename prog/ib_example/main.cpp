@@ -4,6 +4,7 @@
 #include <iostream>
 using std::cout;
 using std::endl;
+using namespace SystemLib;
 
 const unsigned MAX_ATTEMPTS = 50;
 const unsigned SLEEP_TIME = 10;
@@ -22,9 +23,9 @@ public:
    virtual void handle(const DataLib::Close&  data) { cout << "Close"  << ' ' << data << endl; }
    virtual void handle(const DataLib::State&  data) { cout << "State"  << ' ' << data << endl; }
    virtual void handle(const DataLib::Stats&  data) { cout << "Stats"  << ' ' << data << endl; }
-   virtual void handle(const DataLib::HistoricalStats&  data) { cout << "HistoricalStats" << ' ' << data << endl; }
-   virtual void handle(const DataLib::Fundamentals&     data) { cout << "Fundamentals"    << ' ' << data << endl; }
-   virtual void handle(const Request::Failure& data)          { cout << "Failure"         << ' ' << data << endl; }
+   virtual void handle(const DataLib::HistoricalStats& data) { cout << "HistoricalStats" << ' ' << data << endl; }
+   virtual void handle(const DataLib::Fundamentals&    data) { cout << "Fundamentals"    << ' ' << data << endl; }
+   virtual void handle(const Request::Failure& data)         { cout << "Failure"         << ' ' << data << endl; }
 };
 
 void

@@ -1,6 +1,8 @@
 #include "system/common.h"
 #include "system/request.h"
 
+namespace SystemLib {
+
 Request::KeyStore&
 Request::Keys()
 {
@@ -37,6 +39,9 @@ Request::Remove(Consumer& consumer)
    const RequestKey& key  = consumer.key();
    KeyStore::iterator loc = store.find(key);
    RequestPtr& pt         = loc->second;
+
+   if (!pt)
+      return;
 
    pt->consumers_.erase(&consumer);
 
@@ -140,5 +145,7 @@ Request::update(TwsApi::TickType type, const std::string& value)
    }
    cout << "Request::update: " << value << endl;
 }
+
+} // end of namespace SystemLib
 
 #undef HANDLE_CASE

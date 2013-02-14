@@ -3,6 +3,8 @@
 
 #define PRINT(x) ' ' << #x << '=' << x
 
+namespace SystemLib {
+
 void
 LogWrapper::nextValidId(TwsApi::OrderId orderId)
 {
@@ -281,7 +283,6 @@ LogWrapper::execDetailsEnd(int reqId)
       << PRINT(reqId)
       << endl;
 }
-
 
 void
 LogWrapper::updateMktDepth(TwsApi::TickerId id,
@@ -595,3 +596,5 @@ LogWrapper::tickOptionComputation(TwsApi::TickerId tickerId,
       << PRINT(undPrice)
       << endl;
 }
+
+} // end of namespace SystemLib

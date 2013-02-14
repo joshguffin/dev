@@ -3,6 +3,8 @@
 
 #include "twsapi/common.h"
 
+namespace SystemLib {
+
 class TwsSocket;
 
 class LogWrapper : public TwsApi::EWrapper
@@ -65,4 +67,5 @@ private:
    bool print_;
 };
 
+} // end of namespace SystemLib
 #endif // system_logwrapper_h_INCLUDED

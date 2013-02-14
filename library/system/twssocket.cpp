@@ -2,6 +2,7 @@
 
 #include "twssocket.h"
 
+// ugh.
 namespace TwsApi {
 #include "twsapi/IB_LIBRARY/Shared/EClientSocketBaseImpl.h"
 }
@@ -16,6 +17,8 @@ using std::endl;
 using namespace TwsApi;
 
 const int PING_DEADLINE = 2; // seconds
+
+namespace SystemLib {
 
 ///////////////////////////////////////////////////////////
 // member funcs
@@ -268,3 +271,5 @@ TwsSocket::handleSocketError()
 	eDisconnect();
 	return false;
 }
+
+} // end of namespace SystemLib
