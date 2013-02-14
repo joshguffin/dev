@@ -1,4 +1,5 @@
 #include "system/common.h"
+#include "system/clock.h"
 
 namespace SystemLib {
 
@@ -15,6 +16,8 @@ TwsSystem::TwsSystem()
    , oid_(1)
 	, client_(new TwsSocket(*this))
 {
+   Clock::time_point tp = Clock::Now();
+   cout << "Time is now " << tp << endl;
 }
 
 TwsSystem::~TwsSystem()
