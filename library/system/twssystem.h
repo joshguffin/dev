@@ -4,6 +4,7 @@
 #include "system/accountwrapper.h"
 #include "system/twssocket.h"
 
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <memory>
 #include <stdio.h>
@@ -22,6 +23,8 @@ public:
    IMPLEMENT_ACCESSORS(unsigned int           , port);
    IMPLEMENT_ACCESSORS(const std::string&     , host);
    IMPLEMENT_ACCESSORS(const TwsApi::OrderId& , oid);
+
+   void updateClock();
 
 public:
 
@@ -45,6 +48,10 @@ private:
 
    TwsApi::OrderId oid_;
 	boost::scoped_ptr<TwsSocket> client_;
+
+   boost::posix_time::ptime now_;
+   boost::posix_time::ptime const start_;
+   time_t time_;
 };
 
 } // end of namespace SystemLib

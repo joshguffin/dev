@@ -7,12 +7,13 @@
 namespace SystemLib {
 
 using namespace boost::posix_time;
+using namespace boost::gregorian;
 
 const char*
 MillisecondPrecisionTime()
 {
-   ptime time        = microsec_clock::local_time();
-   time_duration tod = time.time_of_day();
+   ptime now = microsec_clock::local_time();
+   time_duration tod = now.time_of_day();
 
    static char buffer[13];
 
@@ -29,8 +30,8 @@ MillisecondPrecisionTime()
 const char*
 MicrosecondPrecisionTime()
 {
-   ptime time        = microsec_clock::local_time();
-   time_duration tod = time.time_of_day();
+   ptime now = microsec_clock::local_time();
+   time_duration tod = now.time_of_day();
 
    static char buffer[16];
 
@@ -47,26 +48,73 @@ MicrosecondPrecisionTime()
 const char*
 SecondPrecisionTime()
 {
-   time_t now = time(NULL);
-   struct tm timeval;
-   localtime_r(&now, &timeval);
+   ptime now = second_clock::local_time();
+   time_duration tod = now.time_of_day();
 
    static char buffer[9];
-   sprintf(buffer, "%02d:%02d:%02d", timeval.tm_hour, timeval.tm_min, timeval.tm_sec);
+   sprintf(buffer, "%02d:%02d:%02d", tod.hours(), tod.minutes(), tod.seconds());
 
    return buffer;
 }
 
 const char*
-YYYYMMDD()
+yyyymmddString()
 {
-   time_t now = time(NULL);
-   struct tm timeval;
-   localtime_r(&now, &timeval);
+   ptime now  = second_clock::local_time();
+   date today = now.date();
+
+   int year  = static_cast<int>(today.year());
+   int month = static_cast<int>(today.month());
+   int day   = static_cast<int>(today.day());
+
    static char buffer[9];
-   sprintf(buffer, "%d%02d%02d", timeval.tm_year, timeval.tm_mon, timeval.tm_mday);
+   sprintf(buffer, "%d%02d%02d", year, month, day);
 
    return buffer;
 }
+
+int
+yyyymmdd()
+{
+   ptime now  = second_clock::local_time();
+   date today = now.date();
+
+   int yyyymmdd_value = today.day();
+   yyyymmdd_value += today.month() * 100;
+   yyyymmdd_value += today.year()  * 10000;
+
+   return yyyymmdd_value;
+}
+
+time_t
+to_time_t(const boost::posix_time::ptime& time)
+{
+   ptime epoch(date(1970,1,1));
+   time_duration duration = time - epoch;
+   return static_cast<time_t>(duration.total_seconds());
+}
+
+boost::posix_time::ptime
+midnight()
+{
+   ptime now  = second_clock::local_time();
+   date today = now.date();
+
+   ptime  today_midnight(today);
+   return today_midnight;
+}
+
+boost::posix_time::ptime
+midnightTomorrow()
+{
+   ptime now     = second_clock::local_time();
+   date today    = now.date();
+   date tomorrow = today + days(1);
+
+   ptime  tomorrow_midnight(tomorrow);
+   return tomorrow_midnight;
+}
+
+
 
 } // end of namespace SystemLib

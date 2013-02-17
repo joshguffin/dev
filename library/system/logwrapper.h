@@ -29,6 +29,14 @@ protected:
 	virtual void tickSize(TwsApi::TickerId tickerId, TwsApi::TickType field, int size);
 	virtual void tickString(TwsApi::TickerId tickerId, TwsApi::TickType tickType, const std::string& value);
 
+   // order wrapper
+   virtual void nextValidId(TwsApi::OrderId orderId);
+	virtual void openOrder(TwsApi::OrderId orderId, const TwsApi::Contract&, const TwsApi::Order&, const TwsApi::OrderState&);
+	virtual void openOrderEnd();
+	virtual void orderStatus(TwsApi::OrderId orderId, const std::string &status, int filled, int remaining, double avgFillPrice, int permId, int parentId, double lastFillPrice, int clientId, const std::string& whyHeld);
+	virtual void execDetails(int reqId, const TwsApi::Contract& contract, const TwsApi::Execution& execution);
+	virtual void execDetailsEnd(int reqId);
+
 	virtual void bondContractDetails(int reqId, const TwsApi::ContractDetails& contractDetails);
 	virtual void connectionClosed();
 	virtual void contractDetails(int reqId, const TwsApi::ContractDetails& contractDetails);
@@ -36,15 +44,9 @@ protected:
 	virtual void currentTime(long time);
 	virtual void deltaNeutralValidation(int reqId, const TwsApi::UnderComp& underComp);
 	virtual void error(const int id, const int errorCode, const std::string& errorString);
-	virtual void execDetails(int reqId, const TwsApi::Contract& contract, const TwsApi::Execution& execution);
-	virtual void execDetailsEnd(int reqId);
 	virtual void fundamentalData(TwsApi::TickerId reqId, const std::string& data);
 	virtual void historicalData(TwsApi::TickerId reqId, const std::string& date, double open, double high, double low, double close, int volume, int barCount, double WAP, int hasGaps);
 	virtual void marketDataType(TwsApi::TickerId reqId, int marketDataType);
-	virtual void nextValidId(TwsApi::OrderId orderId);
-	virtual void openOrder(TwsApi::OrderId orderId, const TwsApi::Contract&, const TwsApi::Order&, const TwsApi::OrderState&);
-	virtual void openOrderEnd();
-	virtual void orderStatus(TwsApi::OrderId orderId, const std::string &status, int filled, int remaining, double avgFillPrice, int permId, int parentId, double lastFillPrice, int clientId, const std::string& whyHeld);
 	virtual void realtimeBar(TwsApi::TickerId reqId, long time, double open, double high, double low, double close, long volume, double wap, int count);
 	virtual void receiveFA(TwsApi::faDataType pFaDataType, const std::string& cxml);
 	virtual void scannerData(int reqId, int rank, const TwsApi::ContractDetails &contractDetails, const std::string &distance, const std::string &benchmark, const std::string &projection, const std::string &legsStr);

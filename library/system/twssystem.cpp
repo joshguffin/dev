@@ -1,5 +1,4 @@
 #include "system/common.h"
-#include "system/clock.h"
 
 namespace SystemLib {
 
@@ -15,13 +14,21 @@ TwsSystem::TwsSystem()
    , port_(4001)
    , oid_(1)
 	, client_(new TwsSocket(*this))
+   , now_  (boost::posix_time::microsec_clock::local_time())
+   , start_(now_)
+   , time_ (to_time_t(now_))
 {
-   Clock::time_point tp = Clock::Now();
-   cout << "Time is now " << tp << endl;
 }
 
 TwsSystem::~TwsSystem()
 {
+}
+
+void
+TwsSystem::updateClock()
+{
+   now_  = boost::posix_time::microsec_clock::local_time();
+   time_ = to_time_t(now_);
 }
 
 void
@@ -73,6 +80,10 @@ TwsSystem::error(const int id, const int errorCode, const std::string& errorStri
 
    if (errorCode == 200)
       DataWrapper::failed(id, errorString, errorCode);
+
+   if (errorCode == 2105) {
+      // HMDS data farm connection is broken:ushmds.us
+   }
 }
 
 void
