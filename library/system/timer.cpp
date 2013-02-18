@@ -94,6 +94,17 @@ to_time_t(const boost::posix_time::ptime& time)
    return static_cast<time_t>(duration.total_seconds());
 }
 
+timeval
+to_timeval(const boost::posix_time::time_duration& length)
+{
+   struct timeval tv;
+
+   tv.tv_sec  = length.total_seconds();
+   tv.tv_usec = length.total_microseconds() - 1000000 * tv.tv_sec;
+
+   return tv;
+}
+
 boost::posix_time::ptime
 midnight()
 {

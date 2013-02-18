@@ -16,8 +16,6 @@ using std::cout;
 using std::endl;
 using namespace TwsApi;
 
-const int PING_DEADLINE = 2; // seconds
-
 namespace SystemLib {
 
 ///////////////////////////////////////////////////////////
@@ -25,7 +23,6 @@ namespace SystemLib {
 TwsSocket::TwsSocket(EWrapper& wrap)
    : EClientSocketBase(&wrap)
    , wrapper_(wrap)
-	, sleepDeadline_(time(NULL) + PING_DEADLINE)
 	, fd_(-1)
 {
 }
@@ -155,20 +152,9 @@ TwsSocket::receive(char* buf, size_t sz)
 }
 
 void
-TwsSocket::processMessages()
+TwsSocket::processMessages(timeval& interval)
 {
    fd_set readSet, writeSet, errorSet;
-
-   struct timeval tval;
-   tval.tv_usec = 0;
-   tval.tv_sec = 0;
-
-   time_t now = time(NULL);
-
-   while (sleepDeadline_ <= now)
-      sleepDeadline_ += PING_DEADLINE;
-
-   tval.tv_sec = sleepDeadline_ - now;
 
    if (fd_ < 0 )
       return;
@@ -183,7 +169,7 @@ TwsSocket::processMessages()
 
    FD_CLR(fd_, &errorSet);
 
-   int ret = select(fd_ + 1, &readSet, &writeSet, &errorSet, &tval);
+   int ret = select(fd_ + 1, &readSet, &writeSet, &errorSet, &interval);
 
    // timeout
    if (ret == 0)

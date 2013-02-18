@@ -17,7 +17,7 @@ public:
 	~TwsSocket();
 
 	bool isSocketOK() const;
-   void processMessages();
+   void processMessages(timeval&);
 
    bool connect(const std::string& host, unsigned port);
    void disconnect();
@@ -46,7 +46,6 @@ public:
 private:
 
    TwsApi::EWrapper& wrapper_;
-	time_t sleepDeadline_;
 	int fd_;
 };
 

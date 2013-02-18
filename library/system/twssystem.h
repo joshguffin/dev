@@ -20,16 +20,21 @@ public:
    void logging(bool);
 	void processMessages();
 
-   IMPLEMENT_ACCESSORS(unsigned int           , port);
-   IMPLEMENT_ACCESSORS(const std::string&     , host);
-   IMPLEMENT_ACCESSORS(const TwsApi::OrderId& , oid);
+   IMPLEMENT_ACCESSORS(time_t             , time);
+   IMPLEMENT_ACCESSORS(unsigned int       , port);
+   IMPLEMENT_ACCESSORS(const std::string& , host);
 
-   void updateClock();
+   const boost::posix_time::ptime& updateNow();
+   const boost::posix_time::ptime& now() const;
+
+   static const boost::posix_time::ptime& Now();
 
 public:
 
    bool connect();
 	bool isConnected() const;
+
+   virtual TwsSocket& client() const { return *client_; }
 
 private:
 
@@ -39,7 +44,6 @@ private:
 	virtual void error(const int id, const int errorCode, const std::string&);
    virtual void nextValidId(TwsApi::OrderId);
 
-   virtual TwsSocket& client() const { return *client_; }
 
 private:
 
@@ -52,6 +56,8 @@ private:
    boost::posix_time::ptime now_;
    boost::posix_time::ptime const start_;
    time_t time_;
+
+   timeval defaultInterval_;
 };
 
 } // end of namespace SystemLib
