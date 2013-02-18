@@ -13,7 +13,6 @@ TwsSystem::Instance()
 TwsSystem::TwsSystem()
    : host_("127.0.0.1")
    , port_(4001)
-   , oid_(1)
 	, client_(new TwsSocket(*this))
    , now_  (boost::posix_time::microsec_clock::local_time())
    , start_(now_)
@@ -107,13 +106,6 @@ TwsSystem::error(const int id, const int errorCode, const std::string& errorStri
    if (errorCode == 2105) {
       // HMDS data farm connection is broken:ushmds.us
    }
-}
-
-void
-TwsSystem::nextValidId(TwsApi::OrderId orderId)
-{
-   oid_ = orderId;
-   LogWrapper::nextValidId(orderId);
 }
 
 } // end of namespace SystemLib

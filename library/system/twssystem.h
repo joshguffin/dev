@@ -1,7 +1,7 @@
 #ifndef system_twssystem_h_INCLUDED
 #define system_twssystem_h_INCLUDED
 
-#include "system/accountwrapper.h"
+#include "system/orderwrapper.h"
 #include "system/twssocket.h"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -11,7 +11,7 @@
 
 namespace SystemLib {
 
-class TwsSystem : public AccountWrapper
+class TwsSystem : public OrderWrapper
 {
 public:
 
@@ -42,15 +42,12 @@ private:
 	~TwsSystem();
 
 	virtual void error(const int id, const int errorCode, const std::string&);
-   virtual void nextValidId(TwsApi::OrderId);
-
 
 private:
 
    std::string  host_;
    unsigned int port_;
 
-   TwsApi::OrderId oid_;
 	boost::scoped_ptr<TwsSocket> client_;
 
    boost::posix_time::ptime now_;
