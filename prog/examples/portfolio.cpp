@@ -3,9 +3,6 @@
 
 #include <iostream>
 
-const unsigned MAX_ATTEMPTS = 50;
-const unsigned SLEEP_TIME = 10;
-
 using namespace SystemLib;
 
 //==============================================================================
@@ -69,29 +66,21 @@ main(int argc, char** argv)
 	unsigned int port = argc > 1 ? atoi(argv[1]) : 4001;
    std::string host(argc > 2 ? argv[2] : "127.0.0.1");
 
+   cout << "Connecting to " << host << ':' << port << endl;
+
    TwsSystem& system = TwsSystem::Instance();
    system.host(host);
    system.port(port);
    system.logging(false);
-
-	unsigned attempt = 0;
+   system.connect();
 
    AccountConsumer ac;
-	for (;;) {
-		++attempt;
-      system.connect();
 
-		while (system.isConnected()) {
-			system.processMessages();
-         if (ac.done())
-            return 0;
-      }
-
-		if (attempt >= MAX_ATTEMPTS)
-			break;
-
-		sleep(SLEEP_TIME);
-	}
+   while (system.isConnected()) {
+      system.processMessages();
+      if (ac.done())
+         return 0;
+   }
 
    return 0;
 }
