@@ -18,9 +18,9 @@ Last::Last(double price, int size, time_t time)
 {}
 
 Last::Last(double price, int size, double time)
-   : time_(time)
-   , price_(price)
+   : price_(price)
    , size_(size)
+   , time_(time)
 {}
 
 bool

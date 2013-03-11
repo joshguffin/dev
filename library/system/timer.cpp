@@ -16,10 +16,9 @@ MillisecondPrecisionTimestamp()
    time_duration tod = now.time_of_day();
 
    double timestamp = to_fractional_timestamp(now);
-   timestamp = floor(timestamp * 1E3) / 1E3;
 
    static char buffer[14];
-   sprintf(&buffer[0], "%10.3f", timestamp);
+   sprintf(&buffer[0], "%.3lf", timestamp);
 
    return buffer;
 }
@@ -31,10 +30,9 @@ MicrosecondPrecisionTimestamp()
    time_duration tod = now.time_of_day();
 
    double timestamp = to_fractional_timestamp(now);
-   timestamp = floor(timestamp * 1E6) / 1E6;
 
    static char buffer[17];
-   sprintf(&buffer[0], "%10.6f", timestamp);
+   sprintf(&buffer[0], "%.6lf", timestamp);
 
    return buffer;
 }
