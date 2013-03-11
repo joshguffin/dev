@@ -29,11 +29,14 @@ public:
    const boost::posix_time::ptime& now() const;
 
    static const boost::posix_time::ptime& Now();
+   static void SignalHandler(int);
 
 public:
 
    bool connect();
 	bool isConnected() const;
+   bool carryOn() const;
+   void carryOn(bool);
 
    virtual TwsSocket& client() const { return *client_; }
 
@@ -55,6 +58,7 @@ private:
    boost::posix_time::ptime const start_;
    time_t time_;
 
+   bool carryOn_;
    timeval defaultInterval_;
 };
 

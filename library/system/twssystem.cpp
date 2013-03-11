@@ -1,13 +1,36 @@
 #include "system/common.h"
 #include "system/fuse.h"
 
+#include <signal.h>
+
 namespace SystemLib {
 
 TwsSystem&
 TwsSystem::Instance()
 {
    static TwsSystem system;
+
+   signal(SIGINT, TwsSystem::SignalHandler);
+
    return system;
+}
+
+void
+TwsSystem::SignalHandler(int signum)
+{
+   static int catches = 0;
+   ++catches;
+
+   printf("\nCaught signal %d (#%d)\n", signum, catches);
+   signal(SIGINT, TwsSystem::SignalHandler);
+   TwsSystem::Instance().processMessages();
+
+   // For whatever reason we're not getting back to the main loop
+   if (catches == 3)
+      exit(1);
+
+   // ask the main loop to exit nicely
+   SystemLib::TwsSystem::Instance().carryOn_ = false;
 }
 
 TwsSystem::TwsSystem()
@@ -17,6 +40,7 @@ TwsSystem::TwsSystem()
    , now_  (boost::posix_time::microsec_clock::local_time())
    , start_(now_)
    , time_ (to_time_t(now_))
+   , carryOn_(true)
 {
    defaultInterval_.tv_sec  = 0;
    defaultInterval_.tv_usec = 1E5; // 1/10th of a seconds sleep time
@@ -74,6 +98,21 @@ bool
 TwsSystem::isConnected() const
 {
    return client_->isConnected();
+}
+
+void
+TwsSystem::carryOn(bool state)
+{
+   carryOn_ = state;
+}
+
+bool
+TwsSystem::carryOn() const
+{
+   if (!isConnected())
+      return false;
+
+   return carryOn_;
 }
 
 void

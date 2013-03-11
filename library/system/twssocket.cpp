@@ -178,6 +178,10 @@ TwsSocket::processMessages(timeval& interval)
       return;
 
    if (ret < 0) {
+      // ignore iterrupts; occurs due to ctrl-c, handled by system
+      if (errno == EINTR)
+         return;
+
       cout << "TwsSocket::processMessages: select error " << errno << endl;
       eDisconnect();
       return;
