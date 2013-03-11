@@ -39,6 +39,15 @@ operator<<(std::ostream& os, const SinglePrice& data)
    return os << data.price();
 }
 
+inline std::istream&
+operator<<(std::istream& is, SinglePrice& data)
+{
+   double price;
+   is >> price;
+   data.price(price);
+   return is;
+}
+
 
 } // end of namespace DataLib
 

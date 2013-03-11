@@ -52,6 +52,27 @@ operator<<(std::ostream& os, const Stats& data)
    return os;
 }
 
+inline std::istream&
+operator>>(std::istream& is, Stats& data)
+{
+   double items[6];
+   int vol;
+
+   for (int i = 0; i < 6; ++i)
+      is >> items[i];
+
+   is >> vol;
+
+   data.high(items[0]);
+   data.low(items[1]);
+   data.tradeRate(items[2]);
+   data.tradeCount(items[3]);
+   data.realTimeVolume(items[4]);
+   data.volumeRate(items[5]);
+   data.volume(vol);
+   return is;
+}
+
 } // end of namespace DataLib
 
 #endif // data_stats_h_INCLUDED

@@ -38,6 +38,24 @@ operator<<(std::ostream& os, const BidAsk& data)
    return os;
 }
 
+inline std::istream&
+operator>>(std::istream& is, BidAsk& data)
+{
+   double bid;
+   double ask;
+   int    bs;
+   int    as;
+
+   is >> bid >> ask >> bs >> as;
+
+   data.bid(bid);
+   data.ask(ask);
+   data.bidSize(bs);
+   data.askSize(as);
+
+   return is;
+}
+
 } // end of namespace DataLib
 
 #endif // data_bidask_h_INCLUDED

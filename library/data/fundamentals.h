@@ -25,6 +25,15 @@ operator<<(std::ostream& os, const Fundamentals& data)
    return os << data.vals();
 }
 
+inline std::istream&
+operator>>(std::istream& is, Fundamentals& data)
+{
+   std::string val;
+   is >> val;
+   data.vals(val);
+   return is;
+}
+
 } // end of namespace DataLib
 
 #endif // data_fundamentals_h_INCLUDED
