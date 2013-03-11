@@ -1,6 +1,7 @@
 #ifndef data_last_h_INCLUDED
 #define data_last_h_INCLUDED
 
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <iostream>
 
 namespace DataLib {
@@ -12,10 +13,11 @@ public:
 
    Last();
    Last(double, int, time_t);
+   Last(double, int, double);
 
    IMPLEMENT_ACCESSORS(double , price);
    IMPLEMENT_ACCESSORS(int    , size);
-   IMPLEMENT_ACCESSORS(time_t , time);
+   IMPLEMENT_ACCESSORS(double , time);
 
    bool valid() const;
    void setTime(const std::string&);
@@ -24,7 +26,7 @@ private:
 
    double price_;
    int    size_;
-   time_t time_;
+   double time_;
 };
 
 inline std::ostream&

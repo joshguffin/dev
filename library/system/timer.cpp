@@ -10,6 +10,36 @@ using namespace boost::posix_time;
 using namespace boost::gregorian;
 
 const char*
+MillisecondPrecisionTimestamp()
+{
+   ptime now = microsec_clock::local_time();
+   time_duration tod = now.time_of_day();
+
+   double timestamp = to_fractional_timestamp(now);
+   timestamp = floor(timestamp * 1E3) / 1E3;
+
+   static char buffer[14];
+   sprintf(&buffer[0], "%10.3f", timestamp);
+
+   return buffer;
+}
+
+const char*
+MicrosecondPrecisionTimestamp()
+{
+   ptime now = microsec_clock::local_time();
+   time_duration tod = now.time_of_day();
+
+   double timestamp = to_fractional_timestamp(now);
+   timestamp = floor(timestamp * 1E6) / 1E6;
+
+   static char buffer[17];
+   sprintf(&buffer[0], "%10.6f", timestamp);
+
+   return buffer;
+}
+
+const char*
 MillisecondPrecisionTime()
 {
    ptime now = microsec_clock::local_time();
@@ -89,9 +119,17 @@ yyyymmdd()
 time_t
 to_time_t(const boost::posix_time::ptime& time)
 {
-   ptime epoch(date(1970,1,1));
+   static ptime epoch(date(1970,1,1));
    time_duration duration = time - epoch;
    return static_cast<time_t>(duration.total_seconds());
+}
+
+double
+to_fractional_timestamp(const boost::posix_time::ptime& time)
+{
+   static ptime epoch(date(1970,1,1));
+   time_duration duration = time - epoch;
+   return static_cast<double>(duration.total_microseconds()) / 1E6;
 }
 
 timeval
@@ -100,9 +138,16 @@ to_timeval(const boost::posix_time::time_duration& length)
    struct timeval tv;
 
    tv.tv_sec  = length.total_seconds();
-   tv.tv_usec = length.total_microseconds() - 1000000 * tv.tv_sec;
+   tv.tv_usec = length.total_microseconds() - 1000000L * tv.tv_sec;
 
    return tv;
+}
+
+boost::posix_time::ptime
+from_fractional_timestamp(double timestamp)
+{
+   static ptime epoch(date(1970,1,1));
+   return epoch + microseconds(timestamp * 1E6);
 }
 
 boost::posix_time::ptime
@@ -125,7 +170,5 @@ midnightTomorrow()
    ptime  tomorrow_midnight(tomorrow);
    return tomorrow_midnight;
 }
-
-
 
 } // end of namespace SystemLib

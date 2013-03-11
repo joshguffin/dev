@@ -14,6 +14,7 @@ namespace SystemLib {
    const char* SecondPrecisionTime();
    const char* MicrosecondPrecisionTime();
    const char* MillisecondPrecisionTime();
+   const char* MillisecondPrecisionTimestamp();
    const char* yyyymmddString();
    int         yyyymmdd();
 
@@ -22,6 +23,10 @@ namespace SystemLib {
 
    time_t  to_time_t (const boost::posix_time::ptime&);
    timeval to_timeval(const boost::posix_time::time_duration&);
+
+   // convert from fractional timestamp to ptime (microsecond resolution)
+   double to_fractional_timestamp(const boost::posix_time::ptime& time);
+   boost::posix_time::ptime from_fractional_timestamp(double);
 
 } // end of namespace SystemLib
 
