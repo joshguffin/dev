@@ -18,6 +18,8 @@ TwsSystem::TwsSystem()
    , start_(now_)
    , time_ (to_time_t(now_))
 {
+   defaultInterval_.tv_sec  = 0;
+   defaultInterval_.tv_usec = 1E5; // 1/10th of a seconds sleep time
 }
 
 TwsSystem::~TwsSystem()

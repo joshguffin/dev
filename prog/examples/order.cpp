@@ -3,14 +3,7 @@
 
 #include <iostream>
 
-const unsigned MAX_ATTEMPTS = 50;
-const unsigned SLEEP_TIME = 10;
-
 using namespace SystemLib;
-
-//==============================================================================
-// main loop
-//==============================================================================
 
 SystemLib::Order
 createOrder(const std::string& symbol, float price, int size)

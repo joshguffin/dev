@@ -24,6 +24,7 @@ public:
    IMPLEMENT_ACCESSORS(unsigned int       , port);
    IMPLEMENT_ACCESSORS(const std::string& , host);
 
+   // see timer.h for time helpers
    const boost::posix_time::ptime& updateNow();
    const boost::posix_time::ptime& now() const;
 

@@ -120,7 +120,7 @@ TwsSocket::isSocketOK() const
 int
 TwsSocket::send(const char* buf, size_t sz)
 {
-	if (sz <= 0)
+	if (sz == 0)
 		return 0;
 
 	int nResult = ::send(fd_, buf, sz, 0);
@@ -137,7 +137,7 @@ TwsSocket::send(const char* buf, size_t sz)
 int
 TwsSocket::receive(char* buf, size_t sz)
 {
-	if (sz <= 0)
+	if (sz == 0)
 		return 0;
 
 	int nResult = ::recv(fd_, buf, sz, 0);
@@ -154,6 +154,8 @@ TwsSocket::receive(char* buf, size_t sz)
 void
 TwsSocket::processMessages(timeval& interval)
 {
+   errno = 0;
+
    fd_set readSet, writeSet, errorSet;
 
    if (fd_ < 0 )
