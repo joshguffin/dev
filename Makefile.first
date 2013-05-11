@@ -2,7 +2,6 @@
 #
 # set the $CPPROOT environment variable to point to the directory containing library/, prog/, Makefile.first, etc.
 #
-CPPROOT ?= .
 LIBRARY = $(CPPROOT)/library
 
 CCC = clang
@@ -22,9 +21,11 @@ LINKSTEM   = $(CXX) $(LIBS) $(LDFLAGS)
 INCLUDES = -I. -I$(LIBRARY) -I$(LIBRARY)/include -I/usr/local/include
 LIBS = -L/usr/lib -L/usr/local/lib -L$(LIBRARY)/lib -lm -lrt -lboost_date_time
 
-CCFLAGS = -g -Wall -Werror -Wextra -Wno-switch -Wno-unused-parameter
 LDFLAGS = -g
+CCFLAGS = -g -Wall -Werror -Wextra -Wno-switch -Wno-unused-parameter \
+			 -D__GIT_VERSION=\"$(GIT_VERSION)\"
 
+$(eval GIT_VERSION=$(shell sh -c 'git describe --abbrev=4 --dirty --always'))
 LIBRARIES=
 
 # all files are compiled using these commands

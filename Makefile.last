@@ -55,7 +55,7 @@ define CREATE_TEST_TARGET
 
 -include $($(1)_DEPS)
 
-$($(1)_TARG) : $(1)_description $($(1)_OBJ)
+$($(1)_TARG) : $($(1)_OBJ)
 	$(CXX) $($(1)_OBJ) $(LIBS) $($(1)_LIBS) $(LDFLAGS) -lboost_unit_test_framework -o $($(1)_TARG)
 
 $($(1)_TARG)_clean :
@@ -125,6 +125,6 @@ distclean: $(foreach lib, $(LIBRARIES), $(lib)_lib_clean) clean
 clean:
 	rm -f *.o *.d $(APPPROGS) $(APP_OBJECTS) $(APP_DEPENDS) $(TEST_DEPENDS) $(TEST_TARGETS)
 
-.phony: targets tests tests_all tests_clean distclean clean
+.phony: targets tests tests_all tests_clean distclean clean git_version
 
 
