@@ -31,7 +31,7 @@ Log::requiresConsoleDisplay(bool fileOpen) const
 Log::Log()
    : fileFlushing_(true)
    , beginningOfLine_(true)
-   , millisecondResolution_(false)
+   , millisecondResolution_(true)
    , filter_(Level::Unknown)
    , current_(Level::Normal)
 {}

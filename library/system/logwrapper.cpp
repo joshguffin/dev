@@ -11,10 +11,10 @@ LogWrapper::nextValidId(TwsApi::OrderId orderId)
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::nextValidId: "
       << PRINT(orderId)
-      << endl;
+      << endm;
 }
 
 
@@ -27,13 +27,13 @@ LogWrapper::tickPrice(TwsApi::TickerId tickerId,
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::tickPrice: "
       << PRINT(tickerId)
       << PRINT(type)
       << PRINT(price)
       << PRINT(canAutoExecute)
-      << endl;
+      << endm;
 }
 
 void
@@ -42,12 +42,12 @@ LogWrapper::tickSize(TwsApi::TickerId tickerId, TwsApi::TickType type, int size)
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::tickSize: "
       << PRINT(tickerId)
       << PRINT(type)
       << PRINT(size)
-      << endl;
+      << endm;
 }
 
 void
@@ -56,12 +56,12 @@ LogWrapper::tickGeneric(TwsApi::TickerId tickerId, TwsApi::TickType type, double
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::tickGeneric: "
       << PRINT(tickerId)
       << PRINT(type)
       << PRINT(value)
-      << endl;
+      << endm;
 }
 
 void
@@ -70,12 +70,12 @@ LogWrapper::tickString(TwsApi::TickerId tickerId, TwsApi::TickType type, const s
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::tickString: "
       << PRINT(tickerId)
       << PRINT(type)
       << PRINT(value)
-      << endl;
+      << endm;
 }
 
 void
@@ -84,12 +84,12 @@ LogWrapper::error(const int id, const int errorCode, const std::string& errorStr
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::error: "
       << PRINT(id)
       << PRINT(errorCode)
       << PRINT(errorString)
-      << endl;
+      << endm;
 }
 
 void
@@ -106,7 +106,7 @@ LogWrapper::tickEFP(TwsApi::TickerId tickerId,
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::tickEFP: "
       << PRINT(tickerId)
       << PRINT(type)
@@ -117,27 +117,32 @@ LogWrapper::tickEFP(TwsApi::TickerId tickerId,
       << PRINT(futureExpiry)
       << PRINT(dividendImpact)
       << PRINT(dividendsToExpiry)
-      << endl;
+      << endm;
 }
 
 void
 LogWrapper::openOrder(TwsApi::OrderId orderId,
-                      const TwsApi::Contract& c,
-                      const TwsApi::Order& o,
-                      const TwsApi::OrderState& ostate)
+                      const TwsApi::Contract& contract,
+                      const TwsApi::Order& order,
+                      const TwsApi::OrderState& state)
 {
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::openOrder: "
       << PRINT(orderId)
-      << endl;
+      << PRINT(contract)
+      << PRINT(state) << '\n'
+      << PRINT(order)
+      << endm;
 }
 
 void
 LogWrapper::openOrderEnd()
-{}
+{
+   LOG << "LogWrapper::openOrderEnd" << endm;
+}
 
 void
 LogWrapper::winError(const std::string& str, int lastError)
@@ -145,11 +150,11 @@ LogWrapper::winError(const std::string& str, int lastError)
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::winError: "
       << PRINT(str)
       << PRINT(lastError)
-      << endl;
+      << endm;
 }
 
 void
@@ -165,13 +170,13 @@ LogWrapper::updateAccountValue(const std::string& key,
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::updateAccountValue: "
       << PRINT(key)
       << PRINT(val)
       << PRINT(currency)
       << PRINT(accountName)
-      << endl;
+      << endm;
 }
 
 void
@@ -187,7 +192,7 @@ LogWrapper::updatePortfolio(const TwsApi::Contract& contract,
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::updatePortfolio: "
       << PRINT(contract)
       << PRINT(position)
@@ -197,7 +202,7 @@ LogWrapper::updatePortfolio(const TwsApi::Contract& contract,
       << PRINT(unrealizedPNL)
       << PRINT(realizedPNL)
       << PRINT(accountName)
-      << endl;
+      << endm;
 }
 
 void
@@ -206,10 +211,10 @@ LogWrapper::updateAccountTime(const std::string& timeStamp)
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::updateAccountTime: "
       << PRINT(timeStamp)
-      << endl;
+      << endm;
 }
 
 void
@@ -218,10 +223,10 @@ LogWrapper::accountDownloadEnd(const std::string& accountName)
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::accountDownloadEnd: "
       << PRINT(accountName)
-      << endl;
+      << endm;
 }
 
 void
@@ -230,10 +235,10 @@ LogWrapper::contractDetails(int reqId, const TwsApi::ContractDetails& contractDe
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::contractDetails: "
       << PRINT(reqId)
-      << endl;
+      << endm;
 }
 
 void
@@ -242,10 +247,10 @@ LogWrapper::bondContractDetails(int reqId, const TwsApi::ContractDetails& contra
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::bondContractDetails: "
       << PRINT(reqId)
-      << endl;
+      << endm;
 }
 
 void
@@ -254,10 +259,10 @@ LogWrapper::contractDetailsEnd(int reqId)
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::contractDetailsEnd: "
       << PRINT(reqId)
-      << endl;
+      << endm;
 }
 
 void
@@ -266,10 +271,10 @@ LogWrapper::execDetails(int reqId, const TwsApi::Contract& contract, const TwsAp
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::execDetails: "
       << PRINT(reqId)
-      << endl;
+      << endm;
 }
 
 void
@@ -278,10 +283,10 @@ LogWrapper::execDetailsEnd(int reqId)
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::execDetailsEnd: "
       << PRINT(reqId)
-      << endl;
+      << endm;
 }
 
 void
@@ -295,7 +300,7 @@ LogWrapper::updateMktDepth(TwsApi::TickerId id,
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::updateMktDepth: "
       << PRINT(id)
       << PRINT(position)
@@ -303,7 +308,7 @@ LogWrapper::updateMktDepth(TwsApi::TickerId id,
       << PRINT(side)
       << PRINT(price)
       << PRINT(size)
-      << endl;
+      << endm;
 }
 
 void
@@ -318,7 +323,7 @@ LogWrapper::updateMktDepthL2(TwsApi::TickerId id,
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::updateMktDepthL2: "
       << PRINT(id)
       << PRINT(position)
@@ -327,7 +332,7 @@ LogWrapper::updateMktDepthL2(TwsApi::TickerId id,
       << PRINT(side)
       << PRINT(price)
       << PRINT(size)
-      << endl;
+      << endm;
 }
 
 void
@@ -339,13 +344,13 @@ LogWrapper::updateNewsBulletin(int msgId,
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::updateNewsBulletin: "
       << PRINT(msgId)
       << PRINT(msgType)
       << PRINT(newsMessage)
       << PRINT(originExch)
-      << endl;
+      << endm;
 }
 
 void
@@ -354,10 +359,10 @@ LogWrapper::managedAccounts(const std::string& accountsList)
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::managedAccounts: "
       << PRINT(accountsList)
-      << endl;
+      << endm;
 }
 
 void
@@ -366,11 +371,11 @@ LogWrapper::receiveFA(TwsApi::faDataType pFaDataType, const std::string& cxml)
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::receiveFA: "
       << PRINT(pFaDataType)
       << PRINT(cxml)
-      << endl;
+      << endm;
 }
 
 void
@@ -388,7 +393,7 @@ LogWrapper::historicalData(TwsApi::TickerId reqId,
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::historicalData: "
       << PRINT(reqId)
       << PRINT(date)
@@ -400,7 +405,7 @@ LogWrapper::historicalData(TwsApi::TickerId reqId,
       << PRINT(barCount)
       << PRINT(WAP)
       << PRINT(hasGaps)
-      << endl;
+      << endm;
 }
 
 void
@@ -409,10 +414,10 @@ LogWrapper::scannerParameters(const std::string& xml)
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::scannerParameters: "
       << PRINT(xml)
-      << endl;
+      << endm;
 }
 
 void
@@ -427,7 +432,7 @@ LogWrapper::scannerData(int reqId,
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::scannerData: "
       << PRINT(reqId)
       << PRINT(rank)
@@ -435,7 +440,7 @@ LogWrapper::scannerData(int reqId,
       << PRINT(benchmark)
       << PRINT(projection)
       << PRINT(legsStr)
-      << endl;
+      << endm;
 }
 
 void
@@ -444,10 +449,10 @@ LogWrapper::scannerDataEnd(int reqId)
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::scannerDataEnd: "
       << PRINT(reqId)
-      << endl;
+      << endm;
 }
 
 void
@@ -464,7 +469,7 @@ LogWrapper::realtimeBar(TwsApi::TickerId reqId,
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::realtimeBar: "
       << PRINT(reqId)
       << PRINT(time)
@@ -475,7 +480,7 @@ LogWrapper::realtimeBar(TwsApi::TickerId reqId,
       << PRINT(volume)
       << PRINT(wap)
       << PRINT(count)
-      << endl;
+      << endm;
 }
 
 void
@@ -484,11 +489,11 @@ LogWrapper::fundamentalData(TwsApi::TickerId reqId, const std::string& data)
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::fundamentalData: "
       << PRINT(reqId)
       << PRINT(data)
-      << endl;
+      << endm;
 }
 
 void
@@ -497,10 +502,10 @@ LogWrapper::deltaNeutralValidation(int reqId, const TwsApi::UnderComp& underComp
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::deltaNeutralValidation: "
       << PRINT(reqId)
-      << endl;
+      << endm;
 }
 
 void
@@ -509,10 +514,10 @@ LogWrapper::tickSnapshotEnd(int reqId)
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::tickSnapshotEnd: "
       << PRINT(reqId)
-      << endl;
+      << endm;
 }
 
 void
@@ -521,11 +526,11 @@ LogWrapper::marketDataType(TwsApi::TickerId reqId, int marketDataType)
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::marketDataType: "
       << PRINT(reqId)
       << PRINT(marketDataType)
-      << endl;
+      << endm;
 }
 
 void
@@ -544,7 +549,7 @@ LogWrapper::orderStatus(TwsApi::OrderId orderId,
    if (!print_)
       return;
 
-   cout
+   LOG
       << "LogWrapper::orderStatus: "
       << PRINT(orderId)
       << PRINT(status)
@@ -556,7 +561,7 @@ LogWrapper::orderStatus(TwsApi::OrderId orderId,
       << PRINT(lastFillPrice)
       << PRINT(clientId)
       << PRINT(whyHeld)
-      << endl;
+      << endm;
 }
 
 void
@@ -582,7 +587,7 @@ LogWrapper::tickOptionComputation(TwsApi::TickerId tickerId,
    if (!print_)
       return;
 
-   cout
+   LOG
       << "TwsClient::tickOptionComputation: "
       << PRINT(tickerId)
       << PRINT(type)
@@ -594,7 +599,7 @@ LogWrapper::tickOptionComputation(TwsApi::TickerId tickerId,
       << PRINT(vega)
       << PRINT(theta)
       << PRINT(undPrice)
-      << endl;
+      << endm;
 }
 
 } // end of namespace SystemLib
