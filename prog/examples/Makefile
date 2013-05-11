@@ -1,5 +1,9 @@
 include $(CPPROOT)/Makefile.first
 
+lookup_OBJECTS   = lookup.o
+lookup_LIBRARIES = system data string
+APPPROGS += lookup
+
 order_OBJECTS   = order.o
 order_LIBRARIES = system data string
 APPPROGS += order

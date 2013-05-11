@@ -1,17 +1,18 @@
 #ifndef system_orderwrapper_h_INCLUDED
 #define system_orderwrapper_h_INCLUDED
 
-#include "system/accountwrapper.h"
+#include "system/contractwrapper.h"
 #include "system/order.h"
 
 namespace SystemLib {
 
-class OrderWrapper : public AccountWrapper
+class OrderWrapper : public ContractWrapper
 {
 
 public:
 
    OrderWrapper();
+   virtual ~OrderWrapper() {}
 
    void place(const SystemLib::Order&);
 

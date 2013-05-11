@@ -2,6 +2,8 @@
 #include "system/unittest.h"
 #include "string/integertostring.h"
 
+#include "system/contract.h"
+
 #include <sstream>
 
 // === SPARSE enums ===========================================================
@@ -119,5 +121,14 @@ BOOST_AUTO_TEST_CASE(CompactStream)
    STREAM_TEST(EnumVal4);
    STREAM_TEST(EnumVal5);
    STREAM_TEST(EnumVal6);
+}
+#undef STREAM_TEST
+
+#define STREAM_TEST(value) { std::stringstream ss; ss << SystemLib::Contract::Security::value; BOOST_CHECK(ss.str() == #value); };
+BOOST_AUTO_TEST_CASE(ContractSecurity)
+{
+   STREAM_TEST(STK);
+   STREAM_TEST(FUT);
+   STREAM_TEST(OPT);
 }
 #undef STREAM_TEST
