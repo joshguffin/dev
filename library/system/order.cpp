@@ -4,10 +4,10 @@
 namespace SystemLib {
 
 Order::Order(const TwsApi::Contract& contract, float price, int size)
-   : contract_(contract)
-   , price_(price)
+   : price_(price)
    , size_(size)
    , oid_(-1)
+   , contract_(contract)
 {
 }
 
@@ -37,7 +37,9 @@ Order::twsOrder() const
 std::ostream&
 operator<<(std::ostream& os, const Order& order)
 {
-   os << order.contract() << ' ' << order.size() << '@' << order.price();
+   os << order.contract()
+      << " sz=" << order.size()
+      << " px=" << order.price();
    return os;
 }
 

@@ -4,6 +4,8 @@
 #include "string/stringtable.h"
 #include "string/csv.h"
 
+#include <iostream>
+
 namespace TwsApi {
 
 // === Contract helpers ========================================================
@@ -119,7 +121,6 @@ IMPLEMENT_ORDER_OPERATOR(>=)
 IMPLEMENT_ORDER_OPERATOR(<)
 IMPLEMENT_ORDER_OPERATOR(>)
 #undef IMPLEMENT_ORDER_OPERATOR
-
 
 } // end of namespace TwsApi
 

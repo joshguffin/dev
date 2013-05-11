@@ -20,11 +20,12 @@ public:
 
 private:
 
-   TwsApi::Contract contract_;
    float price_;
    int size_;
 
    TwsApi::OrderId oid_;
+   TwsApi::Contract contract_;
+   TwsApi::OrderState state_;
 };
 
 std::ostream& operator<<(std::ostream&, const Order&);
