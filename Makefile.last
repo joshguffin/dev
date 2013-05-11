@@ -64,12 +64,16 @@ $($(1)_TARG)_clean :
 endef
 
 ###################################################################################
-# define library targets; lib/libxxxx.a, and xxxx_lib, which produces it
+# define library targets xxxx_lib that produce $CPPROOT/library/lib/libxxxx.a
 ###################################################################################
 define CREATE_LIBRARY
 
-# all .cpp files are contributors except for those of the form xxx_test.cpp
-$(eval $(1)_lib_SOURCES=$(wildcard $(CPPROOT)/library/$(1)/*.cpp))
+# obtain all .cpp files under git version control in the library; note that the
+# files need only be staged, not necessarily committed
+$(eval $(1)_lib_SOURCES=$(shell cd $(CPPROOT)/library/$(1)/ && git ls-files *.cpp))
+$(eval $(1)_lib_SOURCES=$(shell cd $(CPPROOT)/library/$(1)/ && git ls-files *.cpp))
+# append full path to each source file
+$(eval $(1)_lib_SOURCES=$(foreach source, $($(1)_lib_SOURCES), $(CPPROOT)/library/$(1)/$(source)))
 $(eval $(1)_lib_SOURCES=$(filter-out %_test.cpp, $($(1)_lib_SOURCES)))
 
 $(eval $(1)_lib_DEPENDS=$($(1)_lib_SOURCES:.cpp=.d))
@@ -86,13 +90,15 @@ $($(1)_lib_LIBRARY): $($(1)_lib_OBJECTS)
 
 # print what we're doing
 $(1)_lib_description:
-	@/bin/echo "Building library '$(1)'"
+	@/bin/echo "Building library '$(1)' from $($(1)_lib_SOURCES)"
+	@/bin/echo "Sources are cd $(CPPROOT)/library/$(1)/ && git ls-files *.cpp"
 
 # create the redirect target
 $(1)_lib: $(1)_lib_description $($(1)_lib_LIBRARY)
 
 $(1)_lib_clean:
 	@echo "Cleaning $(1) library"
+	@echo "$($(1)_lib_OBJECTS) $($(1)_lib_DEPENDS) $($(1)_lib_LIBRARY)"
 	@rm -f $($(1)_lib_OBJECTS) $($(1)_lib_DEPENDS) $($(1)_lib_LIBRARY)
 endef
 
