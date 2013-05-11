@@ -25,6 +25,7 @@ public:
 protected:
 
    AccountWrapper() {}
+   virtual ~AccountWrapper() {}
 
    void failed(TwsApi::TickerId id, const std::string& reason, int code);
 

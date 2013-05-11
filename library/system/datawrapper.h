@@ -20,6 +20,7 @@ public:
 protected:
 
    DataWrapper();
+   virtual ~DataWrapper() {}
 
    void failed(TwsApi::TickerId id, const std::string& reason, int code);
 
