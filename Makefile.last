@@ -39,7 +39,7 @@ $(1): $(1)_description $($(1)_EXPANDED_OBJECTS) $(APP_LIBDEPS)
 endef
 
 ###################################################################################
-# Create test targets
+# Create test targets - see $CPPROOT/tests/Makefile for usage
 ###################################################################################
 TEST_TARGETS=
 TEST_DEPENDS=
@@ -55,8 +55,8 @@ define CREATE_TEST_TARGET
 
 -include $($(1)_DEPS)
 
-$($(1)_TARG) : $($(1)_OBJ)
-	$(CXX) $($(1)_OBJ) $(LIBS) $($(1)_LIBS) $(LDFLAGS) -lboost_unit_test_framework -o $($(1)_TARG)
+$($(1)_TARG) : $($(1)_OBJ) $($(1)_LIBS)
+	$(CXX) $(LIBS) $(LDFLAGS) $($(1)_OBJ) $($(1)_LIBS) -lboost_unit_test_framework -o $($(1)_TARG)
 
 $($(1)_TARG)_clean :
 	rm -f $($(1)_TARG) $($(1)_OBJ) $($(1)_DEPS)
@@ -90,8 +90,7 @@ $($(1)_lib_LIBRARY): $($(1)_lib_OBJECTS)
 
 # print what we're doing
 $(1)_lib_description:
-	@/bin/echo "Building library '$(1)' from $($(1)_lib_SOURCES)"
-	@/bin/echo "Sources are cd $(CPPROOT)/library/$(1)/ && git ls-files *.cpp"
+	@/bin/echo "Building library '$(1)'"
 
 # create the redirect target
 $(1)_lib: $(1)_lib_description $($(1)_lib_LIBRARY)
@@ -121,7 +120,8 @@ targets:
 
 tests:
 	@echo "Known tests:"
-	@echo $(TEST_TARGETS)
+	@echo "tests_all"
+	@echo $(TESTPROGSOURCES)
 
 tests_all   : $(TEST_TARGETS)
 tests_clean : $(foreach target, $(TEST_TARGETS), $(target)_clean)

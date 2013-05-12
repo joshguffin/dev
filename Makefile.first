@@ -19,7 +19,13 @@ MAKEDEPEND = $(MAKESTEM) $*.d -MM -MQ $*.o -MT $(LIBRARY)
 LINKSTEM   = $(CXX) $(LIBS) $(LDFLAGS)
 
 INCLUDES = -I. -I$(LIBRARY) -I$(LIBRARY)/include -I/usr/local/include
-LIBS = -L/usr/lib -L/usr/local/lib -L$(LIBRARY)/lib -lm -lrt -lboost_date_time
+LIBS =  \
+		  -L/usr/lib \
+		  -L/usr/local/lib  \
+		  -L$(LIBRARY)/lib  \
+		  -lboost_regex     \
+		  -lboost_date_time \
+		  -lm -lrt
 
 LDFLAGS = -g
 CCFLAGS = -g -Wall -Werror -Wextra -Wno-switch -Wno-unused-parameter \
