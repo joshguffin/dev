@@ -1,5 +1,4 @@
 #include "system/common.h"
-#include "system/fuse.h"
 
 #include <iostream>
 
@@ -24,15 +23,9 @@ main(int argc, char** argv)
    system.logging(true);
    system.connect();
 
-   DelayedOrder order(args[1], atof(args[2].c_str()), atoi(args[3].c_str()));
-
-   FuseBase* fuse = Fuse::Create(boost::posix_time::seconds(1), order, &DelayedOrder::place);
-   fuse->activate();
-
-   while (system.isConnected())
+   while (system.carryOn())
       system.processMessages();
 
-   delete fuse;
    return 0;
 }
 

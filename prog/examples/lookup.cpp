@@ -27,7 +27,7 @@ main(int argc, char** argv)
    Contract::Security::Type stock = Contract::Security::STK;
    system.requestDetails(args[1], stock);
 
-   while (system.isConnected())
+   while (system.carryOn())
       system.processMessages();
 
    return 0;

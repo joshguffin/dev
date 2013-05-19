@@ -45,7 +45,7 @@ main(int argc, char** argv)
    RequestKey key(argv[1]);
    Item request(key);
 
-   while (system.isConnected())
+   while (system.carryOn())
       system.processMessages();
 
    return 0;

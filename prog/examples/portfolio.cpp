@@ -76,7 +76,7 @@ main(int argc, char** argv)
 
    AccountConsumer ac;
 
-   while (system.isConnected()) {
+   while (system.carryOn()) {
       system.processMessages();
       if (ac.done())
          return 0;

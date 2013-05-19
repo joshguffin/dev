@@ -65,7 +65,7 @@ main(int argc, char** argv)
    FuseBase* fuse = Fuse::Create(boost::posix_time::seconds(1), order, &DelayedOrder::place);
    fuse->activate();
 
-   while (system.isConnected())
+   while (system.carryOn())
       system.processMessages();
 
    delete fuse;
