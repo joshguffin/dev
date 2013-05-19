@@ -1,7 +1,10 @@
 #ifndef string_ansishellcolors_h_INCLUDED
 #define string_ansishellcolors_h_INCLUDED
 
-#include <iosfwd>
+#include <string>
+#include <iostream>
+#include <sstream>
+#include "base/headermacros.h"
 
 /**
  * Use this class like:
@@ -17,30 +20,31 @@ namespace StringLib {
 // Color declaration
 //==============================================================================
 
+#define Fields(F) \
+   F(Black)       \
+   F(Red)         \
+   F(Green)       \
+   F(Yellow)      \
+   F(Blue)        \
+   F(Magenta)     \
+   F(Cyan)        \
+   F(White)       \
+   F(BoldBlack)   \
+   F(BoldRed)     \
+   F(BoldGreen)   \
+   F(BoldYellow)  \
+   F(BoldBlue)    \
+   F(BoldMagenta) \
+   F(BoldCyan)    \
+   F(BoldWhite)
+
 struct Color
 {
 public:
 
    friend std::ostream& operator<<(std::ostream&, const Color&);
-   enum Value {
-      Black,
-      Red,
-      Green,
-      Yellow,
-      Blue,
-      Magenta,
-      Cyan,
-      White,
-      BoldBlack,
-      BoldRed,
-      BoldGreen,
-      BoldYellow,
-      BoldBlue,
-      BoldMagenta,
-      BoldCyan,
-      BoldWhite,
-   };
 
+   IMPLEMENT_ENUM_IMPL(COMPACT, Value, Fields);
    Color(const std::string&, Value);
 
 private:
@@ -49,6 +53,9 @@ private:
    Value color_;
 };
 
+IMPLEMENT_ENUM_PRINT(Color::Value, Color::ToString)
+
+#undef Fields
 //==============================================================================
 // Color implementation
 //==============================================================================
