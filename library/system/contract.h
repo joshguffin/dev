@@ -1,5 +1,5 @@
-#ifndef contract_h_INCLUDED
-#define contract_h_INCLUDED
+#ifndef system_contract_h_INCLUDED
+#define system_contract_h_INCLUDED
 
 #include <string>
 
@@ -28,7 +28,6 @@ public:
    F(IND)  \
    F(FOP)  \
    F(CASH) \
-   F(BAG)  \
 
    IMPLEMENT_COMPACT_ENUM_WRAPPER_IN_CLASS(Security, Fields);
 #undef Fields
@@ -61,5 +60,4 @@ private:
 
 } // end of namespace SystemLib
 
-#endif // contract_h_INCLUDED
-
+#endif // system_contract_h_INCLUDED

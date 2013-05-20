@@ -4,6 +4,7 @@
 
 namespace SystemLib {
 
+// specify a contract for a single security
 Contract::Contract(const std::string& symbol,
                    const std::string& security)
    : symbol_(symbol)
