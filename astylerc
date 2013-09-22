@@ -1,0 +1,53 @@
+# This is an astyle config file for my projects.  To use:
+#
+# ln -s $CPPROOT/astylerc $HOME/.astylerc
+#
+
+# bracket formatting
+--style=kr
+
+--indent=spaces=3
+
+# indent 'case' in switches
+--indent-switches
+
+# indent scope-start comments as code
+--indent-col1-comments
+
+# keep conditionals aligned with parens
+--min-conditional-indent=0
+
+################################################################################
+# Padding options
+################################################################################
+
+# add spaces before and after conditional blocks
+--break-blocks
+
+# add spaces after if, for, while,...: if(foo) -> if (foo)
+--pad-header
+
+# add spaces after and before operators: a==b -> a == b
+--pad-oper
+
+# remove extra spaces in parens if ( foo ) -> if (foo)
+--unpad-paren
+
+# anchor * and & to the type, not the variable
+--align-pointer=type
+--align-reference=type
+
+################################################################################
+# Formatting options
+################################################################################
+
+--convert-tabs
+
+# split } else to } \n else
+--break-closing-brackets
+--break-elseifs
+
+--max-code-length=80
+--break-after-logical
+
+
