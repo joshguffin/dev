@@ -1,0 +1,20 @@
+A 0-1 Integer programming problem solver.  For 1 <= i <= N, let S_i be integers
+and define a function F as
+
+F = sum_i ( c_i + f_i s_i )
+
+where 0 <= s_i <= S_i
+
+and c_i = { 0 if s_i = 0, 1 otherwise };
+
+Then for a desired quantity S, find the s_i that minimize s.  This program takes
+a file consisting of lines of the form
+
+# the desired size S
+d <positive integer>
+
+# entries s_i (first 'i' is the character i always)
+i c_i s_i
+
+# entries S_i ('c' for constraint)
+c S_i
